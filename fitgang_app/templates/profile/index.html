@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Profil - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="profile-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="profile-avatar me-3">
+                                {% if current_user.profile and current_user.profile.avatar_url %}
+                                    <img src="{{ current_user.profile.avatar_url }}" alt="{{ current_user.username }}" class="rounded-circle" width="80" height="80">
+                                {% else %}
+                                    <div class="avatar-placeholder rounded-circle bg-danger text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2rem;">
+                                        {{ current_user.username[0]|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h2 class="mb-1">{{ current_user.username }}</h2>
+                                <p class="text-muted mb-0">{{ current_user.email }}</p>
+                                {% if current_user.profile and current_user.profile.created_at %}
+                                    <small class="text-muted">Membre depuis {{ current_user.profile.created_at.strftime('%B %Y') }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <h6 class="text-muted mb-2">Informations personnelles</h6>
+                                    {% if current_user.profile %}
+                                        {% if current_user.profile.first_name or current_user.profile.last_name %}
+                                            <p class="mb-1"><strong>Nom:</strong> {{ current_user.profile.first_name }} {{ current_user.profile.last_name }}</p>
+                                        {% endif %}
+                                        {% if current_user.profile.phone %}
+                                            <p class="mb-1"><strong>Téléphone:</strong> {{ current_user.profile.phone }}</p>
+                                        {% endif %}
+                                        {% if current_user.profile.date_of_birth %}
+                                            <p class="mb-0"><strong>Date de naissance:</strong> {{ current_user.profile.date_of_birth.strftime('%d/%m/%Y') }}</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="text-muted mb-0">Aucune information disponible</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <h6 class="text-muted mb-2">Statistiques</h6>
+                                    {% if current_user.profile %}
+                                        {% if current_user.profile.height %}
+                                            <p class="mb-1"><strong>Taille:</strong> {{ current_user.profile.height }} cm</p>
+                                        {% endif %}
+                                        {% if current_user.profile.current_weight %}
+                                            <p class="mb-1"><strong>Poids actuel:</strong> {{ current_user.profile.current_weight }} kg</p>
+                                        {% endif %}
+                                        {% if current_user.profile.bmi %}
+                                            <p class="mb-0"><strong>IMC:</strong> {{ "%.1f"|format(current_user.profile.bmi) }}</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="text-muted mb-0">Aucune statistique disponible</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5 class="mb-3">Actions rapides</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ url_for('profile.edit') }}" class="btn btn-danger">
+                                    <i class="bi bi-pencil"></i> Modifier mon profil
+                                </a>
+                                <a href="{{ url_for('profile.purchases') }}" class="btn btn-outline-dark">
+                                    <i class="bi bi-bag-check"></i> Mes achats
+                                </a>
+                                <a href="{{ url_for('profile.change_password') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-key"></i> Changer le mot de passe
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if current_user.is_admin %}
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">
+                            <i class="bi bi-shield-check text-danger"></i> Administration
+                        </h5>
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-dark">
+                            <i class="bi bi-speedometer2"></i> Accéder au Dashboard Admin
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Entraînements - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Mes Entraînements</h1>
+
+    {% if workouts %}
+        <div class="row">
+            {% for workout in workouts %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ workout.name }}</h5>
+                        <p class="card-text">{{ workout.description }}</p>
+                        <a href="{{ url_for('workouts.workout', id=workout.id) }}" class="btn btn-danger">Voir le détail</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Aucun entraînement disponible.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

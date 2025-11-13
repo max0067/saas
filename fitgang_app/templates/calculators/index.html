@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Calculatrices Fitness - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Calculatrices Fitness</h1>
+
+    <div class="row">
+        <!-- BMI Calculator -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calculator"></i> Calculateur IMC</h5>
+                    <p>Calculez votre Indice de Masse Corporelle</p>
+                    <form method="POST" action="{{ url_for('calculators.index') }}#bmi">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label>Poids (kg)</label>
+                            <input type="number" name="weight" class="form-control" step="0.1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Taille (cm)</label>
+                            <input type="number" name="height" class="form-control" required>
+                        </div>
+                        <button type="submit" name="calc_type" value="bmi" class="btn btn-danger">Calculer IMC</button>
+                    </form>
+
+                    {% if bmi_result %}
+                    <div class="alert alert-info mt-3">
+                        <strong>Résultat:</strong> {{ "%.1f"|format(bmi_result.bmi) }} - {{ bmi_result.category }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TDEE Calculator -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-fire"></i> Calculateur TDEE</h5>
+                    <p>Dépense Énergétique Totale Quotidienne</p>
+                    <form method="POST" action="{{ url_for('calculators.index') }}#tdee">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label>Poids (kg)</label>
+                            <input type="number" name="weight" class="form-control" step="0.1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Taille (cm)</label>
+                            <input type="number" name="height" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Âge</label>
+                            <input type="number" name="age" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Sexe</label>
+                            <select name="gender" class="form-select" required>
+                                <option value="male">Homme</option>
+                                <option value="female">Femme</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Niveau d'activité</label>
+                            <select name="activity" class="form-select" required>
+                                <option value="sedentary">Sédentaire</option>
+                                <option value="light">Légèrement actif</option>
+                                <option value="moderate">Modérément actif</option>
+                                <option value="active">Très actif</option>
+                                <option value="extra">Extrêmement actif</option>
+                            </select>
+                        </div>
+                        <button type="submit" name="calc_type" value="tdee" class="btn btn-danger">Calculer TDEE</button>
+                    </form>
+
+                    {% if tdee_result %}
+                    <div class="alert alert-info mt-3">
+                        <strong>TDEE:</strong> {{ tdee_result.tdee|int }} kcal/jour
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

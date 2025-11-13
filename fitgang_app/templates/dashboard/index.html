@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Bienvenue, {{ current_user.username }} !</h1>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-bag"></i> Mes Programmes</h5>
+                    <p class="card-text">Accédez à vos programmes achetés</p>
+                    <a href="{{ url_for('profile.products') }}" class="btn btn-danger">Voir mes programmes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Mes Entraînements</h5>
+                    <p class="card-text">Suivez vos entraînements</p>
+                    <a href="{{ url_for('workouts.index') }}" class="btn btn-danger">Voir mes entraînements</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calculator"></i> Calculatrices</h5>
+                    <p class="card-text">Outils de calcul fitness</p>
+                    <a href="{{ url_for('calculators.index') }}" class="btn btn-danger">Accéder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mes Commandes Récentes</h5>
+                    {% if recent_orders %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td>#{{ order.id }}</td>
+                                        <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
+                                        <td>{{ "%.2f"|format(order.total) }} €</td>
+                                        <td><span class="badge bg-success">{{ order.status }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>Aucune commande pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

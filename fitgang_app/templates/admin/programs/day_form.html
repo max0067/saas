@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Éditer Jour {{ day.day_number }} - {{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_programs.index') }}">Programmes</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_programs.edit', product_id=product.id) }}">{{ product.title }}</a></li>
+            <li class="breadcrumb-item active">Jour {{ day.day_number }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Jour {{ day.day_number }} - Semaine {{ day.week.week_number }}</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Informations du jour</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Titre du jour</label>
+                            <input type="text" name="title" class="form-control" value="{{ day.title }}">
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="is_rest_day" class="form-check-input" id="is_rest_day" {% if day.is_rest_day %}checked{% endif %}>
+                            <label class="form-check-label" for="is_rest_day">Jour de repos</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>Entraînement</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Type d'entraînement</label>
+                            <input type="text" name="workout_type" class="form-control" value="{{ day.workout_type or '' }}" placeholder="Ex: Cardio, Force, HIIT...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description de l'entraînement</label>
+                            <textarea name="workout_description" class="form-control" rows="4">{{ day.workout_description or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Durée (minutes)</label>
+                            <input type="number" name="workout_duration" class="form-control" value="{{ day.workout_duration or '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">URL vidéo</label>
+                            <input type="url" name="workout_video_url" class="form-control" value="{{ day.workout_video_url or '' }}" placeholder="https://...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Image d'entraînement</label>
+                            <input type="file" name="workout_image" class="form-control" accept="image/*">
+                            {% if day.workout_image_url %}
+                            <img src="{{ day.workout_image_url }}" alt="Workout" class="img-fluid mt-2 rounded" style="max-height: 200px;">
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Exercices (JSON)</label>
+                            <textarea name="workout_exercises" class="form-control font-monospace" rows="6" placeholder='[{"name": "Pompes", "sets": 3, "reps": 15, "rest": "60s", "notes": ""}]'>{{ day.workout_exercises|tojson if day.workout_exercises else '' }}</textarea>
+                            <small class="text-muted">Format JSON: liste d'exercices avec name, sets, reps, rest, notes</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="bi bi-egg-fried me-2"></i>Nutrition</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Description nutritionnelle</label>
+                            <textarea name="diet_description" class="form-control" rows="3">{{ day.diet_description or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Calories totales</label>
+                            <input type="number" name="diet_calories" class="form-control" value="{{ day.diet_calories or '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Repas (JSON)</label>
+                            <textarea name="diet_meals" class="form-control font-monospace" rows="6" placeholder='[{"meal_name": "Petit-déjeuner", "time": "7h00", "foods": "Omelette 3 œufs, pain complet", "calories": 450, "macros": "P:30g C:40g L:15g"}]'>{{ day.diet_meals|tojson if day.diet_meals else '' }}</textarea>
+                            <small class="text-muted">Format JSON: liste de repas avec meal_name, time, foods, calories, macros</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-chat-left-quote me-2"></i>Notes & Conseils</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="3">{{ day.notes or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Conseils du coach</label>
+                            <textarea name="coach_tips" class="form-control" rows="3">{{ day.coach_tips or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="position-sticky" style="top: 20px;">
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Enregistrer
+                        </button>
+                        <a href="{{ url_for('admin_programs.edit', product_id=product.id) }}" class="btn btn-outline-secondary">Retour au programme</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

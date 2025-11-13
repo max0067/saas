@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Erreur serveur - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-1 fw-bold text-danger">500</h1>
+            <h2 class="mb-4">Erreur serveur</h2>
+            <p class="lead mb-4">Une erreur est survenue. Veuillez réessayer plus tard.</p>
+            <a href="{{ url_for('main.index') }}" class="btn btn-danger">
+                <i class="bi bi-house-door me-2"></i>Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

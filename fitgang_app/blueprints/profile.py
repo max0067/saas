@@ -1,8 +1,9 @@
 """Profile blueprint."""
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+import os
+from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file, abort, current_app
 from flask_login import login_required, current_user
 from fitgang_app import db
-from fitgang_app.models import OrderItem
+from fitgang_app.models import OrderItem, Product, Order, OrderStatus
 from fitgang_app.forms.profile import ProfileForm, ChangePasswordForm, UploadPhotoForm
 from fitgang_app.models.user import UserPhoto
 from fitgang_app.utils.uploads import save_uploaded_file
@@ -99,7 +100,37 @@ def photos():
 def purchases():
     """User purchases."""
     order_items = OrderItem.query.join(OrderItem.order).filter(
-        OrderItem.order.has(user_id=current_user.id, status='completed')
+        OrderItem.order.has(user_id=current_user.id, status=OrderStatus.COMPLETED)
     ).all()
 
     return render_template('profile/purchases.html', order_items=order_items)
+
+
+@profile_bp.route('/download/<int:product_id>')
+@login_required
+def download(product_id):
+    """Download purchased product."""
+    # Verify user has purchased this product
+    order_item = OrderItem.query.join(OrderItem.order).filter(
+        OrderItem.product_id == product_id,
+        OrderItem.order.has(user_id=current_user.id, status=OrderStatus.COMPLETED)
+    ).first()
+
+    if not order_item:
+        flash('Vous n\'avez pas accès à ce produit.', 'danger')
+        return redirect(url_for('profile.purchases'))
+
+    product = Product.query.get_or_404(product_id)
+
+    if not product.file_path:
+        flash('Ce produit n\'a pas de fichier téléchargeable.', 'warning')
+        return redirect(url_for('profile.purchases'))
+
+    # Build full file path
+    file_path = os.path.join(current_app.root_path, '..', product.file_path)
+
+    if not os.path.exists(file_path):
+        flash('Le fichier n\'existe pas.', 'danger')
+        return redirect(url_for('profile.purchases'))
+
+    return send_file(file_path, as_attachment=True, download_name=f"{product.slug}.{product.file_format or 'pdf'}")

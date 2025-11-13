@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Compléments Alimentaires - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">Compléments Alimentaires</h1>
+        <p class="lead text-muted">Nos recommandations pour optimiser vos résultats</p>
+    </div>
+
+    {% if featured_supplements %}
+    <section class="mb-5">
+        <h2 class="mb-4">Produits Vedettes</h2>
+        <div class="row g-4">
+            {% for supplement in featured_supplements %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-hover">
+                    {% if supplement.image_url %}
+                    <img src="{{ supplement.image_url }}" class="card-img-top" alt="{{ supplement.name }}" style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-warning text-dark mb-2">Vedette</span>
+                        <h5 class="card-title">{{ supplement.name }}</h5>
+                        {% if supplement.brand %}
+                        <p class="text-muted small mb-2"><i class="bi bi-shield-check"></i> {{ supplement.brand }}</p>
+                        {% endif %}
+                        <p class="card-text">{{ supplement.short_description }}</p>
+                        {% if supplement.price_range %}
+                        <p class="fw-bold text-danger">{{ supplement.price_range }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('supplements.detail', slug=supplement.slug) }}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-info-circle me-2"></i>En savoir plus
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% for category, supplements in categories.items() %}
+    {% if supplements %}
+    <section class="mb-5">
+        <h2 class="mb-4"><i class="bi bi-capsule me-2"></i>{{ category }}</h2>
+        <div class="row g-4">
+            {% for supplement in supplements %}
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100">
+                    {% if supplement.image_url %}
+                    <img src="{{ supplement.image_url }}" class="card-img-top" alt="{{ supplement.name }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ supplement.name }}</h6>
+                        {% if supplement.brand %}
+                        <p class="text-muted small mb-2">{{ supplement.brand }}</p>
+                        {% endif %}
+                        {% if supplement.price_range %}
+                        <p class="fw-bold text-danger mb-2">{{ supplement.price_range }}</p>
+                        {% endif %}
+                        <p class="card-text small">{{ supplement.short_description[:100] }}...</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('supplements.detail', slug=supplement.slug) }}" class="btn btn-sm btn-outline-danger w-100">
+                            Voir le produit
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<style>
+.shadow-hover {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.shadow-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+</style>
+{% endblock %}

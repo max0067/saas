@@ -21,7 +21,7 @@ def index():
             })
             total += product.price * item['quantity']
 
-    return render_template('shop/cart.html', items=items, total=total)
+    return render_template('cart/index.html', cart_items=items, total=total)
 
 
 @cart_bp.route('/add/<int:product_id>', methods=['POST'])
@@ -48,7 +48,7 @@ def add(product_id):
     return redirect(url_for('cart.index'))
 
 
-@cart_bp.route('/remove/<int:product_id>')
+@cart_bp.route('/remove/<int:product_id>', methods=['POST'])
 def remove(product_id):
     """Remove product from cart."""
     cart = session.get('cart', [])

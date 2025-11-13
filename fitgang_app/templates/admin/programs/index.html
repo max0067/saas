@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Programmes - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-calendar-week me-2"></i>Programmes Sport & Diète</h1>
+        <a href="{{ url_for('admin_programs.create') }}" class="btn btn-danger">
+            <i class="bi bi-plus-lg me-2"></i>Nouveau programme
+        </a>
+    </div>
+
+    {% if programs.items %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Titre</th>
+                            <th>Type</th>
+                            <th>Niveau</th>
+                            <th>Durée</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for program in programs.items %}
+                        <tr>
+                            <td>
+                                {% if program.image_url %}
+                                <img src="{{ program.image_url }}" alt="{{ program.title }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                                {% else %}
+                                <div class="bg-secondary rounded" style="width: 50px; height: 50px;"></div>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ program.title }}</strong></td>
+                            <td>
+                                {% if program.product_type.value == 'programme_sport' %}
+                                <span class="badge bg-primary">Sport</span>
+                                {% elif program.product_type.value == 'programme_diete' %}
+                                <span class="badge bg-success">Diète</span>
+                                {% else %}
+                                <span class="badge bg-info">Combiné</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ program.difficulty_level.value|title if program.difficulty_level else '-' }}</td>
+                            <td>{{ program.duration_weeks }} semaines</td>
+                            <td>{{ "%.2f"|format(program.price) }}€</td>
+                            <td>
+                                {% if program.is_published %}
+                                <span class="badge bg-success">Publié</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Brouillon</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('admin_programs.edit', product_id=program.id) }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('admin_programs.duplicate', product_id=program.id) }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <button type="submit" class="btn btn-sm btn-info" title="Dupliquer">
+                                        <i class="bi bi-files"></i>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin_programs.delete', product_id=program.id) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if programs.pages > 1 %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if programs.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin_programs.index', page=programs.prev_num) }}">Précédent</a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in programs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if page_num == programs.page %}
+                            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('admin_programs.index', page=page_num) }}">{{ page_num }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if programs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin_programs.index', page=programs.next_num) }}">Suivant</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>Aucun programme créé pour le moment.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

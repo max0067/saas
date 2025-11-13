@@ -7,6 +7,8 @@ from fitgang_app.models.meal import MealPlan, Recipe, Ingredient
 from fitgang_app.models.order import Order, OrderItem, OrderStatus
 from fitgang_app.models.gift import GiftCode, GiftLog
 from fitgang_app.models.affiliate import Affiliate, AffiliateClick, AffiliateConversion
+from fitgang_app.models.program import ProgramWeek, ProgramDay, UserProgramProgress
+from fitgang_app.models.supplement import Supplement, SupplementRecommendation
 
 __all__ = [
     'User',
@@ -33,4 +35,9 @@ __all__ = [
     'Affiliate',
     'AffiliateClick',
     'AffiliateConversion',
+    'ProgramWeek',
+    'ProgramDay',
+    'UserProgramProgress',
+    'Supplement',
+    'SupplementRecommendation',
 ]

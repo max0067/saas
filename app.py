@@ -3,7 +3,9 @@ import os
 from fitgang_app import create_app, db
 from fitgang_app.models import (
     User, Product, BlogPost, BlogCategory, Workout, Exercise,
-    MealPlan, Recipe, Order, OrderItem, GiftCode, Affiliate
+    MealPlan, Recipe, Order, OrderItem, GiftCode, Affiliate,
+    ProgramWeek, ProgramDay, UserProgramProgress,
+    Supplement, SupplementRecommendation
 )
 
 app = create_app(os.environ.get('FLASK_ENV', 'development'))
@@ -26,6 +28,11 @@ def make_shell_context():
         'OrderItem': OrderItem,
         'GiftCode': GiftCode,
         'Affiliate': Affiliate,
+        'ProgramWeek': ProgramWeek,
+        'ProgramDay': ProgramDay,
+        'UserProgramProgress': UserProgramProgress,
+        'Supplement': Supplement,
+        'SupplementRecommendation': SupplementRecommendation,
     }
 
 

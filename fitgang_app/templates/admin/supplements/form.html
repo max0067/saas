@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">{{ title }}</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Informations du complément</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" name="name" class="form-control" value="{{ supplement.name if supplement else '' }}" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Catégorie</label>
+                                    <input type="text" name="category" class="form-control" value="{{ supplement.category if supplement else '' }}" placeholder="Ex: Protéine, Créatine...">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Marque</label>
+                                    <input type="text" name="brand" class="form-control" value="{{ supplement.brand if supplement else '' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description courte</label>
+                            <textarea name="short_description" class="form-control" rows="2">{{ supplement.short_description if supplement else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description complète</label>
+                            <textarea name="description" class="form-control" rows="6">{{ supplement.description if supplement else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bénéfices (un par ligne)</label>
+                            <textarea name="benefits" class="form-control" rows="5" placeholder="Augmente la masse musculaire&#10;Améliore la récupération&#10;Réduit la fatigue">{{ supplement.benefits|join('\n') if supplement and supplement.benefits else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mode d'emploi</label>
+                            <textarea name="usage_instructions" class="form-control" rows="3">{{ supplement.usage_instructions if supplement else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ingrédients</label>
+                            <textarea name="ingredients" class="form-control" rows="3">{{ supplement.ingredients if supplement else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Avertissements</label>
+                            <textarea name="warnings" class="form-control" rows="2">{{ supplement.warnings if supplement else '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Configuration</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Slug (URL)</label>
+                            <input type="text" name="slug" class="form-control" value="{{ supplement.slug if supplement else '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Lien d'affiliation *</label>
+                            <input type="url" name="affiliate_link" class="form-control" value="{{ supplement.affiliate_link if supplement else '' }}" required placeholder="https://...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Code d'affiliation</label>
+                            <input type="text" name="affiliate_code" class="form-control" value="{{ supplement.affiliate_code if supplement else '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fourchette de prix</label>
+                            <input type="text" name="price_range" class="form-control" value="{{ supplement.price_range if supplement else '' }}" placeholder="Ex: 29-39€">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ordre d'affichage</label>
+                            <input type="number" name="display_order" class="form-control" value="{{ supplement.display_order if supplement else '0' }}">
+                            <small class="text-muted">Plus petit = affiché en premier</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Image du produit</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                            {% if supplement and supplement.image_url %}
+                            <img src="{{ supplement.image_url }}" alt="{{ supplement.name }}" class="img-fluid mt-2 rounded">
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="is_published" class="form-check-input" id="is_published" {% if supplement and supplement.is_published %}checked{% endif %}>
+                            <label class="form-check-label" for="is_published">Publié</label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured" {% if supplement and supplement.is_featured %}checked{% endif %}>
+                            <label class="form-check-label" for="is_featured">Produit vedette</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg me-2"></i>Enregistrer
+                    </button>
+                    <a href="{{ url_for('admin_supplements.index') }}" class="btn btn-outline-secondary">Annuler</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

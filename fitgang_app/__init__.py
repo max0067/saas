@@ -57,6 +57,7 @@ def create_app(config_name=None):
     from fitgang_app.blueprints.checkout import checkout_bp
     from fitgang_app.blueprints.workouts import workouts_bp
     from fitgang_app.blueprints.calculators import calculators_bp
+    from fitgang_app.blueprints.supplements import supplements_bp
     from fitgang_app.blueprints.gifts import gifts_bp
     from fitgang_app.blueprints.webhooks import webhooks_bp
     from fitgang_app.blueprints.api import api_bp
@@ -66,6 +67,9 @@ def create_app(config_name=None):
         admin_bp, admin_users_bp, admin_products_bp,
         admin_blog_bp, admin_analytics_bp, admin_affiliates_bp
     )
+    from fitgang_app.blueprints.admin.programs import admin_programs_bp
+    from fitgang_app.blueprints.admin.ebooks import admin_ebooks_bp
+    from fitgang_app.blueprints.admin.supplements import admin_supplements_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -77,6 +81,7 @@ def create_app(config_name=None):
     app.register_blueprint(checkout_bp, url_prefix='/checkout')
     app.register_blueprint(workouts_bp, url_prefix='/workouts')
     app.register_blueprint(calculators_bp, url_prefix='/calculators')
+    app.register_blueprint(supplements_bp, url_prefix='/complements')
     app.register_blueprint(gifts_bp, url_prefix='/gifts')
     app.register_blueprint(webhooks_bp, url_prefix='/webhooks')
     app.register_blueprint(api_bp, url_prefix='/api')
@@ -85,6 +90,9 @@ def create_app(config_name=None):
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(admin_users_bp, url_prefix='/admin/users')
     app.register_blueprint(admin_products_bp, url_prefix='/admin/products')
+    app.register_blueprint(admin_programs_bp, url_prefix='/admin/programs')
+    app.register_blueprint(admin_ebooks_bp, url_prefix='/admin/ebooks')
+    app.register_blueprint(admin_supplements_bp, url_prefix='/admin/supplements')
     app.register_blueprint(admin_blog_bp, url_prefix='/admin/blog')
     app.register_blueprint(admin_analytics_bp, url_prefix='/admin/analytics')
     app.register_blueprint(admin_affiliates_bp, url_prefix='/admin/affiliates')

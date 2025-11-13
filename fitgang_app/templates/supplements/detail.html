@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}{{ supplement.name }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('supplements.index') }}">Compléments</a></li>
+            <li class="breadcrumb-item active">{{ supplement.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-5">
+            {% if supplement.image_url %}
+            <img src="{{ supplement.image_url }}" class="img-fluid rounded shadow" alt="{{ supplement.name }}">
+            {% endif %}
+        </div>
+
+        <div class="col-md-7">
+            <h1 class="mb-3">{{ supplement.name }}</h1>
+
+            {% if supplement.brand %}
+            <p class="text-muted h5 mb-3"><i class="bi bi-shield-check"></i> {{ supplement.brand }}</p>
+            {% endif %}
+
+            {% if supplement.category %}
+            <span class="badge bg-primary mb-3">{{ supplement.category }}</span>
+            {% endif %}
+
+            {% if supplement.price_range %}
+            <p class="display-6 text-danger fw-bold mb-4">{{ supplement.price_range }}</p>
+            {% endif %}
+
+            <p class="lead mb-4">{{ supplement.short_description }}</p>
+
+            <div class="mb-4">
+                <a href="{{ supplement.affiliate_link }}" target="_blank" rel="noopener noreferrer"
+                   class="btn btn-danger btn-lg"
+                   onclick="trackClick({{ supplement.id }})">
+                    <i class="bi bi-cart-plus me-2"></i>Acheter ce produit
+                    <i class="bi bi-box-arrow-up-right ms-2"></i>
+                </a>
+            </div>
+
+            {% if supplement.benefits %}
+            <div class="card bg-light mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-check2-circle me-2"></i>Bénéfices</h5>
+                    <ul class="mb-0">
+                        {% for benefit in supplement.benefits %}
+                        <li>{{ benefit }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#description">Description</a>
+                </li>
+                {% if supplement.usage_instructions %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#usage">Mode d'emploi</a>
+                </li>
+                {% endif %}
+                {% if supplement.ingredients %}
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#ingredients">Ingrédients</a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="description">
+                    <div class="bg-white p-4 rounded">
+                        {{ supplement.description|safe }}
+                    </div>
+                </div>
+                {% if supplement.usage_instructions %}
+                <div class="tab-pane fade" id="usage">
+                    <div class="bg-white p-4 rounded">
+                        {{ supplement.usage_instructions }}
+                    </div>
+                </div>
+                {% endif %}
+                {% if supplement.ingredients %}
+                <div class="tab-pane fade" id="ingredients">
+                    <div class="bg-white p-4 rounded">
+                        {{ supplement.ingredients }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if supplement.warnings %}
+            <div class="alert alert-warning mt-4">
+                <h6><i class="bi bi-exclamation-triangle me-2"></i>Avertissements</h6>
+                {{ supplement.warnings }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if related %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Produits similaires</h3>
+            <div class="row g-3">
+                {% for rel in related %}
+                <div class="col-md-4">
+                    <div class="card">
+                        {% if rel.image_url %}
+                        <img src="{{ rel.image_url }}" class="card-img-top" alt="{{ rel.name }}" style="height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ rel.name }}</h6>
+                            <a href="{{ url_for('supplements.detail', slug=rel.slug) }}" class="btn btn-sm btn-outline-danger">Voir</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function trackClick(supplementId) {
+    fetch('/complements/' + supplementId + '/click', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token() }}'
+        }
+    });
+}
+</script>
+{% endblock %}

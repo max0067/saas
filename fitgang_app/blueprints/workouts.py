@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from fitgang_app.models import Workout, Exercise
+from fitgang_app.models.order import OrderStatus
 
 workouts_bp = Blueprint('workouts', __name__)
 
@@ -13,12 +14,12 @@ def list():
     # Get workouts from purchased programs
     workouts = []
     for order in current_user.orders:
-        if order.status == 'completed':
+        if order.status == OrderStatus.COMPLETED:
             for item in order.items:
                 if item.product.workouts:
                     workouts.extend(item.product.workouts)
 
-    return render_template('workouts/list.html', workouts=workouts)
+    return render_template('workouts/index.html', workouts=workouts)
 
 
 @workouts_bp.route('/<int:workout_id>')

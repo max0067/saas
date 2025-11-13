@@ -337,6 +337,172 @@ body {
     margin-bottom: 24px;
 }
 
+.weight-section {
+    padding: 40px 0;
+    background: white;
+}
+
+.weight-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.weight-stat-box {
+    background: linear-gradient(135deg, var(--apple-gray) 0%, #FFFFFF 100%);
+    border: 2px solid #E8E8ED;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.weight-stat-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.weight-stat-box h6 {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #86868B;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.weight-stat-box .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    letter-spacing: -0.02em;
+}
+
+.weight-stat-box .change {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.weight-stat-box .change.positive {
+    color: #34C759;
+}
+
+.weight-stat-box .change.negative {
+    color: #FF3B30;
+}
+
+.weight-chart-container {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+}
+
+.weight-form-container {
+    background: linear-gradient(135deg, var(--apple-blue) 0%, #0051D5 100%);
+    border-radius: 16px;
+    padding: 28px;
+    color: white;
+}
+
+.weight-form-container h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+}
+
+.weight-form-container .form-control,
+.weight-form-container .form-control:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+
+.weight-form-container .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.weight-form-container .form-label {
+    color: white;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    margin-bottom: 8px;
+}
+
+.btn-add-weight {
+    background: white;
+    color: var(--apple-blue);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.btn-add-weight:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+    color: var(--apple-blue);
+}
+
+.weight-entries-list {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+}
+
+.weight-entry-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--apple-gray);
+    transition: all 0.2s ease;
+}
+
+.weight-entry-item:last-child {
+    border-bottom: none;
+}
+
+.weight-entry-item:hover {
+    background: var(--apple-gray);
+    border-radius: 8px;
+}
+
+.weight-entry-info .date {
+    font-size: 0.875rem;
+    color: #86868B;
+    margin-bottom: 4px;
+}
+
+.weight-entry-info .weight {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+}
+
+.weight-entry-actions button {
+    background: transparent;
+    border: none;
+    color: #FF3B30;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.weight-entry-actions button:hover {
+    background: rgba(255, 59, 48, 0.1);
+}
+
 @media (max-width: 768px) {
     .dashboard-title {
         font-size: 2rem;
@@ -398,6 +564,113 @@ body {
                     </div>
                     <div class="stat-value">{{ user_photos|length }}</div>
                     <div class="stat-label">Photos progression</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="weight-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Suivi de Poids</h2>
+        </div>
+
+        {% if weight_stats %}
+        <div class="weight-stats-grid">
+            <div class="weight-stat-box">
+                <h6>Poids Actuel</h6>
+                <div class="value">{{ "%.1f"|format(weight_stats.current) }} kg</div>
+            </div>
+            <div class="weight-stat-box">
+                <h6>Poids Départ</h6>
+                <div class="value">{{ "%.1f"|format(weight_stats.starting) }} kg</div>
+            </div>
+            {% if weight_stats.target %}
+            <div class="weight-stat-box">
+                <h6>Objectif</h6>
+                <div class="value">{{ "%.1f"|format(weight_stats.target) }} kg</div>
+            </div>
+            {% endif %}
+            {% if weight_stats.change %}
+            <div class="weight-stat-box">
+                <h6>Évolution</h6>
+                <div class="value {% if weight_stats.change < 0 %}change negative{% else %}change positive{% endif %}">
+                    {{ "%+.1f"|format(weight_stats.change) }} kg
+                </div>
+            </div>
+            {% endif %}
+            {% if weight_stats.progress %}
+            <div class="weight-stat-box">
+                <h6>Progression</h6>
+                <div class="value change positive">{{ weight_stats.progress }}%</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                {% if weight_entries %}
+                <div class="weight-chart-container">
+                    <h5 style="margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">Graphique d'évolution</h5>
+                    <canvas id="weightChart" height="100"></canvas>
+                </div>
+
+                <div class="weight-entries-list">
+                    <h5 style="margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">Historique</h5>
+                    {% for entry in weight_entries[:10] %}
+                    <div class="weight-entry-item">
+                        <div class="weight-entry-info">
+                            <div class="date">{{ entry.recorded_at.strftime('%d/%m/%Y à %H:%M') }}</div>
+                            <div class="weight">{{ "%.1f"|format(entry.weight) }} kg</div>
+                            {% if entry.notes %}
+                            <div class="notes" style="font-size: 0.875rem; color: #6e6e73; margin-top: 4px;">{{ entry.notes }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="weight-entry-actions">
+                            <form method="POST" action="{{ url_for('dashboard.delete_weight', entry_id=entry.id) }}" style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" onclick="return confirm('Supprimer cette entrée ?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3>Commence ton suivi de poids</h3>
+                    <p>Enregistre ton poids régulièrement pour suivre ta progression</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="weight-form-container">
+                    <h5><i class="bi bi-plus-circle me-2"></i>Ajouter une pesée</h5>
+                    <form method="POST" action="{{ url_for('dashboard.add_weight') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label class="form-label">Poids (kg)</label>
+                            <input type="number" step="0.1" name="weight" class="form-control" placeholder="Ex: 75.5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="recorded_at" class="form-control" value="{{ now.strftime('%Y-%m-%d') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes (optionnel)</label>
+                            <textarea name="notes" class="form-control" rows="2" placeholder="Ajoute une note..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-add-weight">
+                            <i class="bi bi-check-circle me-2"></i>Enregistrer
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -506,4 +779,95 @@ body {
         {% endif %}
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chartCanvas = document.getElementById('weightChart');
+    if (chartCanvas) {
+        fetch('{{ url_for("dashboard.weight_data") }}')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = chartCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Poids (kg)',
+                            data: data.weights,
+                            borderColor: '#007AFF',
+                            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#007AFF',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                borderRadius: 8,
+                                titleFont: {
+                                    size: 14,
+                                    weight: 600
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y.toFixed(1) + ' kg';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    callback: function(value) {
+                                        return value.toFixed(1) + ' kg';
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 11
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading weight data:', error));
+    }
+});
+</script>
 {% endblock %}

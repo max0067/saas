@@ -10,6 +10,7 @@ from fitgang_app.models.affiliate import Affiliate, AffiliateClick, AffiliateCon
 from fitgang_app.models.program import ProgramWeek, ProgramDay, UserProgramProgress
 from fitgang_app.models.supplement import Supplement, SupplementRecommendation
 from fitgang_app.models.home_content import HomeContent
+from fitgang_app.models.weight_entry import WeightEntry
 
 __all__ = [
     'User',
@@ -42,4 +43,5 @@ __all__ = [
     'Supplement',
     'SupplementRecommendation',
     'HomeContent',
+    'WeightEntry',
 ]

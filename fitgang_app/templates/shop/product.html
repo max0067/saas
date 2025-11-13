@@ -3,74 +3,337 @@
 {% block title %}{{ product.title }} - {{ site_name }}{% endblock %}
 
 {% block content %}
-<section class="product-detail-section">
-    <div class="container">
-        <div class="row g-5 align-items-start">
-            <div class="col-lg-6">
-                <div class="product-detail-image">
-                    {% if product.image_url %}
-                        {% if product.image_url.startswith('http') %}
-                            <img src="{{ product.image_url }}" class="img-fluid rounded-4" alt="{{ product.title }}">
-                        {% else %}
-                            <img src="/uploads/{{ product.image_url }}" class="img-fluid rounded-4" alt="{{ product.title }}"
-                                 onerror="this.parentElement.innerHTML='<div class=\'product-placeholder\'><i class=\'bi bi-image\'></i></div>'">
-                        {% endif %}
+<style>
+:root {
+    --apple-blue: #007AFF;
+    --apple-gray: #F5F5F7;
+    --apple-dark: #1D1D1F;
+    --apple-light-gray: #86868B;
+}
+
+.product-hero {
+    background: linear-gradient(180deg, #FBFBFD 0%, #FFFFFF 100%);
+    padding: 60px 0 40px;
+}
+
+.product-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 40px;
+}
+
+.product-image-wrapper {
+    position: sticky;
+    top: 100px;
+}
+
+.product-image {
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-image:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+}
+
+.product-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--apple-gray);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--apple-light-gray);
+}
+
+.product-content {
+    padding-top: 20px;
+}
+
+.product-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+}
+
+.product-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+}
+
+.product-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--apple-gray);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--apple-dark);
+}
+
+.meta-item i {
+    color: var(--apple-blue);
+    font-size: 1.1rem;
+}
+
+.product-price-section {
+    background: linear-gradient(135deg, var(--apple-gray) 0%, #FFFFFF 100%);
+    border: 2px solid #E8E8ED;
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 32px;
+}
+
+.product-price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+}
+
+.price-subtitle {
+    font-size: 1rem;
+    color: var(--apple-light-gray);
+    font-weight: 500;
+}
+
+.product-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #424245;
+    margin-bottom: 40px;
+}
+
+.product-description p {
+    margin-bottom: 16px;
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, var(--apple-blue) 0%, #0051D5 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 40px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25);
+    letter-spacing: -0.01em;
+}
+
+.btn-add-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.35);
+    background: linear-gradient(135deg, #0051D5 0%, var(--apple-blue) 100%);
+}
+
+.btn-add-cart:active {
+    transform: translateY(0);
+}
+
+.features-section {
+    background: white;
+    border: 2px solid var(--apple-gray);
+    border-radius: 18px;
+    padding: 36px;
+    margin-top: 32px;
+}
+
+.features-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.features-list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--apple-gray);
+    font-size: 1.05rem;
+    color: var(--apple-dark);
+}
+
+.features-list li:last-child {
+    border-bottom: none;
+}
+
+.features-list i {
+    color: #34C759;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 992px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .product-image-wrapper {
+        position: relative;
+        top: 0;
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+    }
+
+    .product-price {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-title {
+        font-size: 2rem;
+    }
+
+    .product-price-section {
+        padding: 24px;
+    }
+
+    .features-section {
+        padding: 24px;
+    }
+}
+</style>
+
+<div class="product-hero">
+    <div class="product-container">
+        <div class="product-grid">
+            <div class="product-image-wrapper">
+                {% if product.image_url %}
+                    {% if product.image_url.startswith('http') %}
+                        <img src="{{ product.image_url }}" class="product-image" alt="{{ product.title }}">
                     {% else %}
+                        <img src="/uploads/{{ product.image_url }}" class="product-image" alt="{{ product.title }}"
+                             onerror="this.parentElement.innerHTML='<div class=\'product-placeholder\'><i class=\'bi bi-image\'></i></div>'">
+                    {% endif %}
+                {% else %}
                     <div class="product-placeholder">
                         <i class="bi bi-image"></i>
                     </div>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
 
-            <div class="col-lg-6">
-                <div class="product-detail-content">
-                    {% if product.is_featured %}
-                    <span class="product-badge-inline">🔥 Populaire</span>
+            <div class="product-content">
+                {% if product.is_featured %}
+                    <div class="product-badge">
+                        <span>🔥</span>
+                        <span>Populaire</span>
+                    </div>
+                {% endif %}
+
+                <h1 class="product-title">{{ product.title }}</h1>
+
+                {% if product.difficulty_level or product.duration_weeks %}
+                <div class="product-meta">
+                    {% if product.difficulty_level %}
+                    <div class="meta-item">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>{{ product.difficulty_level }}</span>
+                    </div>
                     {% endif %}
-
-                    <h1 class="product-detail-title">{{ product.title }}</h1>
-
-                    <div class="product-meta mb-4">
-                        {% if product.difficulty_level %}
-                        <span class="meta-badge">
-                            <i class="bi bi-bar-chart"></i> {{ product.difficulty_level }}
-                        </span>
-                        {% endif %}
-                        {% if product.duration_weeks %}
-                        <span class="meta-badge">
-                            <i class="bi bi-calendar-check"></i> {{ product.duration_weeks }} semaines
-                        </span>
-                        {% endif %}
+                    {% if product.duration_weeks %}
+                    <div class="meta-item">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>{{ product.duration_weeks }} semaines</span>
                     </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
-                    <div class="product-price-wrapper">
-                        <span class="product-detail-price">{{ "%.2f"|format(product.price) }} €</span>
-                        <span class="price-label">Paiement unique</span>
-                    </div>
+                <div class="product-price-section">
+                    <div class="product-price">{{ "%.2f"|format(product.price) }} €</div>
+                    <div class="price-subtitle">Paiement unique · Accès à vie</div>
+                </div>
 
-                    <div class="product-description">
-                        {{ product.description|safe }}
-                    </div>
+                <div class="product-description">
+                    {{ product.description|safe }}
+                </div>
 
-                    <form method="POST" action="{{ url_for('cart.add', product_id=product.id) }}" class="mt-5">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3">
-                            <i class="bi bi-cart-plus me-2"></i> Ajouter au panier
-                        </button>
-                    </form>
+                <form method="POST" action="{{ url_for('cart.add', product_id=product.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn-add-cart">
+                        <i class="bi bi-cart-plus"></i>
+                        <span>Ajouter au panier</span>
+                    </button>
+                </form>
 
-                    <div class="product-features mt-5">
-                        <h6 class="features-title">Ce que tu obtiens :</h6>
-                        <ul class="features-list">
-                            <li><i class="bi bi-check-circle-fill"></i> Accès à vie au programme</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Mises à jour gratuites</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Support par email</li>
-                        </ul>
-                    </div>
+                <div class="features-section">
+                    <h3 class="features-title">Ce que tu obtiens</h3>
+                    <ul class="features-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Accès à vie au programme complet</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Toutes les mises à jour gratuites</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Support par email 7j/7</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Accès depuis tous tes appareils</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 {% endblock %}

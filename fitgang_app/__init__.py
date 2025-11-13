@@ -61,6 +61,7 @@ def create_app(config_name=None):
     from fitgang_app.blueprints.gifts import gifts_bp
     from fitgang_app.blueprints.webhooks import webhooks_bp
     from fitgang_app.blueprints.api import api_bp
+    from fitgang_app.blueprints.debug_home import debug_home_bp
 
     # Admin blueprints
     from fitgang_app.blueprints.admin import (
@@ -85,6 +86,7 @@ def create_app(config_name=None):
     app.register_blueprint(gifts_bp, url_prefix='/gifts')
     app.register_blueprint(webhooks_bp, url_prefix='/webhooks')
     app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(debug_home_bp)
 
     # Admin blueprints
     app.register_blueprint(admin_bp, url_prefix='/admin')

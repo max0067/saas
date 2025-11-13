@@ -2,13 +2,61 @@
 
 {% block title %}Programmes d'Entraînement - {{ site_name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 80px 0 60px;
+    color: white;
+}
+.product-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+.product-image-wrapper {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+.product-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.product-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #ED2F2F;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.product-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ED2F2F;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="page-header">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <h1 class="page-title">Programmes d'Entraînement</h1>
-                <p class="page-subtitle">
+                <h1 class="display-4 fw-bold mb-3">Programmes d'Entraînement</h1>
+                <p class="lead mb-0 opacity-90">
                     Des programmes complets structurés semaine par semaine. Force, prise de masse, perte de poids : choisis ce qui te correspond.
                 </p>
             </div>
@@ -16,7 +64,7 @@
     </div>
 </section>
 
-<section class="section-products-catalog">
+<section class="py-5">
     <div class="container">
         {% if products.items %}
             <div class="row g-4">
@@ -25,25 +73,35 @@
                     <div class="card product-card h-100">
                         <div class="product-image-wrapper">
                             {% if product.image_url %}
-                                {% if product.image_url.startswith('http') %}
-                                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
-                                {% else %}
-                                    <img src="/uploads/{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
-                                {% endif %}
+                                <img src="{{ product.image_url if product.image_url.startswith('http') else url_for('uploaded_file', filename=product.image_url.split('/')[-1]) }}"
+                                     class="card-img-top"
+                                     alt="{{ product.title }}"
+                                     onerror="this.src='{{ url_for('static', filename='images/placeholder-product.jpg') }}'">
                             {% else %}
-                                <img src="{{ url_for('static', filename='images/placeholder-product.jpg') }}" class="card-img-top" alt="{{ product.title }}">
+                                <img src="{{ url_for('static', filename='images/placeholder-product.jpg') }}"
+                                     class="card-img-top"
+                                     alt="{{ product.title }}">
                             {% endif %}
                             {% if product.is_featured %}
-                            <span class="product-badge">Populaire</span>
+                            <span class="product-badge">⭐ Populaire</span>
                             {% endif %}
                         </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title mb-3">{{ product.title }}</h5>
-                            <p class="card-text text-muted mb-4 flex-grow-1">{{ product.short_description }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="product-price">{{ "%.2f"|format(product.price) }} €</span>
-                                <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="btn btn-dark btn-sm">
-                                    Découvrir
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title fw-bold mb-2">{{ product.title }}</h5>
+                            <p class="card-text text-muted small mb-3 flex-grow-1">{{ product.short_description }}</p>
+
+                            {% if product.difficulty_level %}
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark">
+                                    {{ product.difficulty_level.value.capitalize() }}
+                                </span>
+                            </div>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="product-price">{{ "%.0f"|format(product.price) }}€</span>
+                                <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="btn btn-dark btn-sm px-4 rounded-pill">
+                                    Découvrir →
                                 </a>
                             </div>
                         </div>
@@ -54,9 +112,10 @@
         {% else %}
             <div class="row justify-content-center">
                 <div class="col-lg-6">
-                    <div class="alert alert-light text-center py-5">
-                        <i class="bi bi-info-circle fs-1 text-muted mb-3 d-block"></i>
-                        <p class="mb-0 text-muted">Aucun programme disponible pour le moment. Reviens bientôt !</p>
+                    <div class="alert alert-light text-center py-5 rounded-4">
+                        <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                        <h5 class="mb-2">Aucun programme disponible</h5>
+                        <p class="mb-0 text-muted">Reviens bientôt pour découvrir nos nouveaux programmes !</p>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 """Admin blueprints."""
 from flask import Blueprint, render_template
 from flask_login import login_required
+from fitgang_app import db
 from fitgang_app.utils.decorators import admin_required
 from fitgang_app.models import User, Product, Order, BlogPost
 from sqlalchemy import func

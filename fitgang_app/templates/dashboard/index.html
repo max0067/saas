@@ -75,8 +75,8 @@
                                     <tr>
                                         <td><strong>#{{ order.id }}</strong></td>
                                         <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
-                                        <td><strong>{{ "%.2f"|format(order.total) }} €</strong></td>
-                                        <td><span class="status-badge success">{{ order.status }}</span></td>
+                                        <td><strong>{{ "%.2f"|format(order.total_amount) }} €</strong></td>
+                                        <td><span class="status-badge success">{{ order.status.value }}</span></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

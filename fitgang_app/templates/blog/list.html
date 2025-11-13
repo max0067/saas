@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="page-title">Le blog FitGang</h1>
+                <p class="page-subtitle">
+                    Conseils, astuces et motivation pour progresser chaque jour. Tout ce que tu dois savoir pour transformer ton corps.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-blog-list">
+    <div class="container">
+        {% if posts.items %}
+            <div class="row g-4">
+                {% for post in posts.items %}
+                <div class="col-lg-6">
+                    <article class="blog-post-card">
+                        {% if post.featured_image %}
+                        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="blog-post-image-link">
+                            <div class="blog-post-image">
+                                <img src="{{ post.featured_image }}" alt="{{ post.title }}">
+                            </div>
+                        </a>
+                        {% endif %}
+                        <div class="blog-post-content">
+                            <div class="blog-post-meta">
+                                <span class="meta-item">
+                                    <i class="bi bi-calendar3"></i> {{ post.published_at.strftime('%d %b %Y') }}
+                                </span>
+                                {% if post.category %}
+                                <span class="meta-item category">
+                                    <i class="bi bi-tag"></i> {{ post.category.name }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <h3 class="blog-post-title">
+                                <a href="{{ url_for('blog.post_detail', slug=post.slug) }}">{{ post.title }}</a>
+                            </h3>
+                            <p class="blog-post-excerpt">{{ post.excerpt }}</p>
+                            <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="blog-read-more">
+                                Lire l'article <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if posts.pages > 1 %}
+            <nav class="blog-pagination" aria-label="Navigation des articles">
+                <ul class="pagination-custom">
+                    {% if posts.has_prev %}
+                    <li>
+                        <a href="{{ url_for('blog.list', page=posts.prev_num) }}" class="pagination-link">
+                            <i class="bi bi-arrow-left"></i> Précédent
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in posts.iter_pages() %}
+                        {% if page_num %}
+                            <li>
+                                <a href="{{ url_for('blog.list', page=page_num) }}"
+                                   class="pagination-link {% if page_num == posts.page %}active{% endif %}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li>
+                        <a href="{{ url_for('blog.list', page=posts.next_num) }}" class="pagination-link">
+                            Suivant <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="alert alert-light text-center py-5">
+                        <i class="bi bi-info-circle fs-1 text-muted mb-3 d-block"></i>
+                        <p class="mb-0 text-muted">Aucun article pour le moment. Reviens bientôt !</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

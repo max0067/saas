@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_blog.index') }}">Articles</a></li>
+                    <li class="breadcrumb-item active">{{ title }}</li>
+                </ol>
+            </nav>
+            <h1>{{ title }}</h1>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Informations de base</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback">{{ form.title.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.slug.label(class="form-label") }}
+                            {{ form.slug(class="form-control" + (" is-invalid" if form.slug.errors else ""), placeholder="laisse-vide-pour-auto-generation") }}
+                            {% if form.slug.errors %}
+                                <div class="invalid-feedback">{{ form.slug.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Laisse vide pour génération automatique</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.excerpt.label(class="form-label") }}
+                            {{ form.excerpt(class="form-control" + (" is-invalid" if form.excerpt.errors else ""), rows="2") }}
+                            {% if form.excerpt.errors %}
+                                <div class="invalid-feedback">{{ form.excerpt.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Court résumé de l'article (max 500 caractères)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.content.label(class="form-label") }}
+                            {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="15") }}
+                            {% if form.content.errors %}
+                                <div class="invalid-feedback">{{ form.content.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Catégorie et Image</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.category_id.label(class="form-label") }}
+                            {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+                            {% if form.category_id.errors %}
+                                <div class="invalid-feedback">{{ form.category_id.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.featured_image.label(class="form-label") }}
+                            {{ form.featured_image(class="form-control" + (" is-invalid" if form.featured_image.errors else "")) }}
+                            {% if form.featured_image.errors %}
+                                <div class="invalid-feedback">{{ form.featured_image.errors[0] }}</div>
+                            {% endif %}
+                            {% if post and post.featured_image %}
+                            <div class="mt-2">
+                                <img src="{{ post.featured_image }}" alt="Current image" style="max-width: 200px;" class="rounded">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">SEO</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.meta_title.label(class="form-label") }}
+                            {{ form.meta_title(class="form-control" + (" is-invalid" if form.meta_title.errors else "")) }}
+                            {% if form.meta_title.errors %}
+                                <div class="invalid-feedback">{{ form.meta_title.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.meta_description.label(class="form-label") }}
+                            {{ form.meta_description(class="form-control" + (" is-invalid" if form.meta_description.errors else ""), rows="3") }}
+                            {% if form.meta_description.errors %}
+                                <div class="invalid-feedback">{{ form.meta_description.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.meta_keywords.label(class="form-label") }}
+                            {{ form.meta_keywords(class="form-control" + (" is-invalid" if form.meta_keywords.errors else "")) }}
+                            {% if form.meta_keywords.errors %}
+                                <div class="invalid-feedback">{{ form.meta_keywords.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Sépare les mots-clés par des virgules</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="bi bi-save me-2"></i>Enregistrer
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ url_for('admin_blog.index') }}" class="btn btn-outline-secondary w-100">
+                                    <i class="bi bi-x-lg me-2"></i>Annuler
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Options de publication</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                {{ form.is_published(class="form-check-input") }}
+                                {{ form.is_published.label(class="form-check-label") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                {{ form.is_featured(class="form-check-input") }}
+                                {{ form.is_featured.label(class="form-check-label") }}
+                            </div>
+                        </div>
+
+                        {% if post %}
+                        <hr>
+                        <div class="small text-muted">
+                            <p class="mb-1"><strong>Créé le:</strong> {{ post.created_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                            <p class="mb-1"><strong>Modifié le:</strong> {{ post.updated_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                            <p class="mb-0"><strong>Vues:</strong> {{ post.views }}</p>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

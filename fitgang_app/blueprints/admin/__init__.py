@@ -3,7 +3,7 @@ from flask import Blueprint, render_template
 from flask_login import login_required
 from fitgang_app import db
 from fitgang_app.utils.decorators import admin_required
-from fitgang_app.models import User, Product, Order, BlogPost
+from fitgang_app.models import User, Product, Order, BlogPost, OrderStatus
 from sqlalchemy import func
 
 # Main admin blueprint
@@ -17,8 +17,8 @@ def index():
     # Get stats
     total_users = User.query.count()
     total_products = Product.query.count()
-    total_orders = Order.query.filter_by(status='completed').count()
-    total_revenue = db.session.query(func.sum(Order.total_amount)).filter_by(status='completed').scalar() or 0
+    total_orders = Order.query.filter_by(status=OrderStatus.COMPLETED).count()
+    total_revenue = db.session.query(func.sum(Order.total_amount)).filter_by(status=OrderStatus.COMPLETED).scalar() or 0
 
     # Recent orders
     recent_orders = Order.query.order_by(Order.created_at.desc()).limit(10).all()

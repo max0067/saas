@@ -25,10 +25,10 @@
                     <div class="card product-card h-100">
                         <div class="product-image-wrapper">
                             {% if product.image_url %}
-                                {% if product.image_url.startswith('http') or product.image_url.startswith('/') %}
+                                {% if product.image_url.startswith('http') %}
                                     <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
                                 {% else %}
-                                    <img src="{{ url_for('static', filename='uploads/' + product.image_url) }}" class="card-img-top" alt="{{ product.title }}">
+                                    <img src="/uploads/{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
                                 {% endif %}
                             {% else %}
                                 <img src="{{ url_for('static', filename='images/placeholder-product.jpg') }}" class="card-img-top" alt="{{ product.title }}">

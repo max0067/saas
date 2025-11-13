@@ -126,4 +126,11 @@ def create_app(config_name=None):
         from fitgang_app.utils.seo import generate_sitemap
         return generate_sitemap(app)
 
+    # Uploads route
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        """Serve uploaded files."""
+        from flask import send_from_directory
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
     return app

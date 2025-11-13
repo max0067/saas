@@ -9,6 +9,7 @@ from fitgang_app.models.gift import GiftCode, GiftLog
 from fitgang_app.models.affiliate import Affiliate, AffiliateClick, AffiliateConversion
 from fitgang_app.models.program import ProgramWeek, ProgramDay, UserProgramProgress
 from fitgang_app.models.supplement import Supplement, SupplementRecommendation
+from fitgang_app.models.home_content import HomeContent
 
 __all__ = [
     'User',
@@ -40,4 +41,5 @@ __all__ = [
     'UserProgramProgress',
     'Supplement',
     'SupplementRecommendation',
+    'HomeContent',
 ]

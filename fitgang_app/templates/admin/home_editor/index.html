@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Éditeur Page d'Accueil - {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --apple-blue: #007AFF;
+    --apple-gray: #F5F5F7;
+    --apple-dark: #1D1D1F;
+}
+
+body {
+    background: var(--apple-gray);
+}
+
+.editor-header {
+    background: white;
+    padding: 40px 0;
+    border-bottom: 1px solid #e5e5e7;
+    margin-bottom: 40px;
+}
+
+.editor-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+.editor-subtitle {
+    font-size: 1rem;
+    color: #6e6e73;
+    font-weight: 400;
+}
+
+.editor-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+}
+
+.section-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--apple-gray);
+}
+
+.form-label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--apple-dark);
+    margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 1.5px solid #d1d1d6;
+    padding: 12px 16px;
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.form-text {
+    font-size: 0.8125rem;
+    color: #6e6e73;
+    margin-top: 6px;
+}
+
+.btn-save {
+    background: var(--apple-blue);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 100px;
+    font-weight: 500;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    background: #0051D5;
+    color: white;
+    transform: scale(1.05);
+}
+
+.btn-back {
+    background: transparent;
+    color: var(--apple-dark);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-weight: 500;
+    border: 1.5px solid #d1d1d6;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background: var(--apple-gray);
+    color: var(--apple-dark);
+}
+
+.preview-note {
+    background: rgba(0, 122, 255, 0.1);
+    border-left: 4px solid var(--apple-blue);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.preview-note p {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--apple-dark);
+}
+
+.file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-upload-wrapper .btn-file-upload {
+    background: var(--apple-gray);
+    color: var(--apple-dark);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    border: 1.5px dashed #d1d1d6;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-wrapper:hover .btn-file-upload {
+    background: #e8e8ea;
+    border-color: var(--apple-blue);
+}
+
+.file-upload-wrapper input[type=file] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="editor-header">
+    <div class="container">
+        <h1 class="editor-title">
+            <i class="bi bi-house-door me-2"></i>Éditeur Page d'Accueil
+        </h1>
+        <p class="editor-subtitle">
+            Personnalise le contenu de la page d'accueil
+        </p>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <div class="preview-note">
+        <p><i class="bi bi-info-circle me-2"></i><strong>Astuce :</strong> Utilise <code>&lt;br&gt;</code> pour créer des sauts de ligne dans les titres</p>
+    </div>
+
+    <form action="{{ url_for('admin_home_editor.update') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Hero Section -->
+        <div class="editor-card">
+            <h2 class="section-header">Section Hero</h2>
+
+            <div class="mb-4">
+                <label for="hero_title" class="form-label">Titre principal</label>
+                <textarea class="form-control" id="hero_title" name="hero_title" rows="2" required>{{ content.hero_title|safe }}</textarea>
+                <small class="form-text">Le titre affiché en grand sur la page d'accueil</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="hero_subtitle" class="form-label">Sous-titre</label>
+                <textarea class="form-control" id="hero_subtitle" name="hero_subtitle" rows="3" required>{{ content.hero_subtitle }}</textarea>
+                <small class="form-text">Description sous le titre principal</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="hero_image" class="form-label">Image Hero</label>
+                <div class="file-upload-wrapper">
+                    <label class="btn-file-upload">
+                        <i class="bi bi-upload me-2"></i>Choisir une nouvelle image
+                        <input type="file" id="hero_image" name="hero_image" accept="image/*">
+                    </label>
+                </div>
+                <small class="form-text">Image actuelle : {{ content.hero_image }}</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label for="hero_button_text" class="form-label">Texte bouton principal</label>
+                    <input type="text" class="form-control" id="hero_button_text" name="hero_button_text" value="{{ content.hero_button_text }}" required>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="hero_button_link" class="form-label">Lien bouton principal</label>
+                    <input type="text" class="form-control" id="hero_button_link" name="hero_button_link" value="{{ content.hero_button_link }}" required>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="hero_secondary_button_text" class="form-label">Texte bouton secondaire</label>
+                    <input type="text" class="form-control" id="hero_secondary_button_text" name="hero_secondary_button_text" value="{{ content.hero_secondary_button_text }}" required>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="hero_secondary_button_link" class="form-label">Lien bouton secondaire</label>
+                    <input type="text" class="form-control" id="hero_secondary_button_link" name="hero_secondary_button_link" value="{{ content.hero_secondary_button_link }}" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products Section -->
+        <div class="editor-card">
+            <h2 class="section-header">Section Programmes Populaires</h2>
+
+            <div class="mb-4">
+                <label for="products_section_title" class="form-label">Titre de la section</label>
+                <input type="text" class="form-control" id="products_section_title" name="products_section_title" value="{{ content.products_section_title }}" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="products_section_subtitle" class="form-label">Sous-titre de la section</label>
+                <input type="text" class="form-control" id="products_section_subtitle" name="products_section_subtitle" value="{{ content.products_section_subtitle }}" required>
+            </div>
+        </div>
+
+        <!-- Blog Section -->
+        <div class="editor-card">
+            <h2 class="section-header">Section Blog</h2>
+
+            <div class="mb-4">
+                <label for="blog_section_title" class="form-label">Titre de la section</label>
+                <input type="text" class="form-control" id="blog_section_title" name="blog_section_title" value="{{ content.blog_section_title }}" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="blog_section_subtitle" class="form-label">Sous-titre de la section</label>
+                <input type="text" class="form-control" id="blog_section_subtitle" name="blog_section_subtitle" value="{{ content.blog_section_subtitle }}" required>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="editor-card">
+            <h2 class="section-header">Section Appel à l'Action (CTA)</h2>
+
+            <div class="mb-4">
+                <label for="cta_title" class="form-label">Titre CTA</label>
+                <textarea class="form-control" id="cta_title" name="cta_title" rows="2" required>{{ content.cta_title|safe }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="cta_subtitle" class="form-label">Sous-titre CTA</label>
+                <textarea class="form-control" id="cta_subtitle" name="cta_subtitle" rows="2" required>{{ content.cta_subtitle }}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label for="cta_button_text" class="form-label">Texte du bouton</label>
+                    <input type="text" class="form-control" id="cta_button_text" name="cta_button_text" value="{{ content.cta_button_text }}" required>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="cta_button_link" class="form-label">Lien du bouton</label>
+                    <input type="text" class="form-control" id="cta_button_link" name="cta_button_link" value="{{ content.cta_button_link }}" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-3 justify-content-between">
+            <a href="{{ url_for('admin.index') }}" class="btn-back">
+                <i class="bi bi-arrow-left me-2"></i>Retour
+            </a>
+            <button type="submit" class="btn-save">
+                <i class="bi bi-check-lg me-2"></i>Enregistrer les modifications
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

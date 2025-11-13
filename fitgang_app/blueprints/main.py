@@ -1,6 +1,6 @@
 """Main blueprint."""
 from flask import Blueprint, render_template, send_file, current_app, abort
-from fitgang_app.models import BlogPost, Product
+from fitgang_app.models import BlogPost, Product, HomeContent
 from fitgang_app.utils.uploads import verify_signed_url_token
 import os
 
@@ -12,11 +12,13 @@ def index():
     """Homepage."""
     featured_posts = BlogPost.query.filter_by(is_published=True, is_featured=True).limit(3).all()
     featured_products = Product.query.filter_by(is_published=True, is_featured=True).limit(3).all()
+    home_content = HomeContent.get_content()
 
     return render_template(
         'index.html',
         featured_posts=featured_posts,
-        featured_products=featured_products
+        featured_products=featured_products,
+        content=home_content
     )
 
 

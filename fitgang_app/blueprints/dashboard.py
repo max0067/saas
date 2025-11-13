@@ -29,5 +29,5 @@ def index():
         'dashboard/index.html',
         recent_sessions=recent_sessions,
         total_workouts=total_workouts,
-        completed_orders=completed_orders
+        recent_orders=completed_orders  # Changed from completed_orders to recent_orders
     )

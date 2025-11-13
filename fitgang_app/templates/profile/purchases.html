@@ -21,12 +21,12 @@
                             <span class="text-muted">Acheté le {{ item.order.created_at.strftime('%d/%m/%Y') }}</span>
                         </div>
                         {% if item.product.product_type.value in ['programme_sport', 'programme_diete', 'programme_combine'] %}
-                        <a href="{{ url_for('workouts.view_program', product_id=item.product_id) }}" class="btn btn-danger w-100 mb-2">
+                        <a href="{{ url_for('shop.access_product', slug=item.product.slug) }}" class="btn btn-danger w-100 mb-2">
                             <i class="bi bi-play-circle me-2"></i>Accéder au programme
                         </a>
                         {% elif item.product.product_type.value == 'ebook' and item.product.file_path %}
-                        <a href="{{ url_for('profile.download', product_id=item.product_id) }}" class="btn btn-danger w-100 mb-2">
-                            <i class="bi bi-download me-2"></i>Télécharger l'eBook
+                        <a href="{{ url_for('shop.access_product', slug=item.product.slug) }}" class="btn btn-danger w-100 mb-2">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Lire l'eBook
                         </a>
                         {% endif %}
                     </div>

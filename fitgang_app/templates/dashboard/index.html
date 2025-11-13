@@ -486,7 +486,7 @@ body {
                             <p>Acheté le {{ order.created_at.strftime('%d/%m/%Y') }}</p>
                         </div>
                     </div>
-                    <a href="{{ url_for('shop.product_detail', slug=item.product.slug) }}" class="btn-access">
+                    <a href="{{ url_for('shop.access_product', slug=item.product.slug) }}" class="btn-access">
                         Accéder
                     </a>
                 </div>

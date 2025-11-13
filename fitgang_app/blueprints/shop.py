@@ -1,6 +1,8 @@
 """Shop blueprint."""
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file, current_app
+from flask_login import login_required, current_user
 from fitgang_app.models import Product, ProductType
+import os
 
 shop_bp = Blueprint('shop', __name__)
 
@@ -65,3 +67,28 @@ def product_detail(slug):
     related_products = product.related.limit(4).all()
 
     return render_template('shop/product.html', product=product, related_products=related_products)
+
+
+@shop_bp.route('/<slug>/access')
+@login_required
+def access_product(slug):
+    """Access purchased product content."""
+    product = Product.query.filter_by(slug=slug, is_published=True).first_or_404()
+
+    # Check if user has access
+    if not current_user.is_admin() and not current_user.has_access_to_product(product.id):
+        flash('Vous devez acheter ce produit pour y accéder.', 'warning')
+        return redirect(url_for('shop.product_detail', slug=slug))
+
+    # Redirect based on product type
+    if product.product_type == ProductType.EBOOK:
+        # For ebooks, serve the PDF file
+        if product.file_path:
+            file_full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], product.file_path)
+            if os.path.exists(file_full_path):
+                return send_file(file_full_path, as_attachment=False)
+        flash('Fichier ebook introuvable.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    else:
+        # For programs, redirect to workouts
+        return redirect(url_for('workouts.list'))

@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Éditer Jour {{ day.day_number }} - {{ product.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.exercise-item, .meal-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.btn-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_programs.index') }}">Programmes</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_programs.edit', product_id=product.id) }}">{{ product.title }}</a></li>
+            <li class="breadcrumb-item active">Jour {{ day.day_number }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Jour {{ day.day_number }} - Semaine {{ day.week.week_number }}</h1>
+
+    <form method="POST" enctype="multipart/form-data" id="dayForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="workout_exercises" id="workout_exercises_json">
+        <input type="hidden" name="diet_meals" id="diet_meals_json">
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Infos générales -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Informations du jour</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Titre du jour</label>
+                            <input type="text" name="title" class="form-control" value="{{ day.title }}">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="is_rest_day" class="form-check-input" id="is_rest_day" {% if day.is_rest_day %}checked{% endif %}>
+                            <label class="form-check-label" for="is_rest_day">Jour de repos</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entraînement -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>Entraînement</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Type d'entraînement</label>
+                            <input type="text" name="workout_type" class="form-control" value="{{ day.workout_type or '' }}" placeholder="Ex: Cardio, Force, HIIT...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="workout_description" class="form-control" rows="3">{{ day.workout_description or '' }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Durée (minutes)</label>
+                                <input type="number" name="workout_duration" class="form-control" value="{{ day.workout_duration or '' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">URL vidéo</label>
+                                <input type="url" name="workout_video_url" class="form-control" value="{{ day.workout_video_url or '' }}">
+                            </div>
+                        </div>
+
+                        <!-- Exercices -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Exercices</label>
+                            <div id="exercisesList"></div>
+                            <button type="button" class="btn btn-outline-success btn-sm mt-2" onclick="addExercise()">
+                                <i class="bi bi-plus-circle me-1"></i>Ajouter un exercice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-egg-fried me-2"></i>Nutrition</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Description nutritionnelle</label>
+                            <textarea name="diet_description" class="form-control" rows="2">{{ day.diet_description or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Calories totales</label>
+                            <input type="number" name="diet_calories" class="form-control" value="{{ day.diet_calories or '' }}">
+                        </div>
+
+                        <!-- Repas -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Repas</label>
+                            <div id="mealsList"></div>
+                            <button type="button" class="btn btn-outline-warning btn-sm mt-2" onclick="addMeal()">
+                                <i class="bi bi-plus-circle me-1"></i>Ajouter un repas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-chat-left-quote me-2"></i>Notes & Conseils</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="2">{{ day.notes or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Conseils du coach</label>
+                            <textarea name="coach_tips" class="form-control" rows="2">{{ day.coach_tips or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="position-sticky" style="top: 20px;">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="bi bi-check-lg me-2"></i>Enregistrer
+                    </button>
+                    <a href="{{ url_for('admin_programs.edit', product_id=product.id) }}" class="btn btn-outline-secondary w-100">
+                        Retour au programme
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let exercises = {{ day.workout_exercises|tojson if day.workout_exercises else '[]'|safe }};
+let meals = {{ day.diet_meals|tojson if day.diet_meals else '[]'|safe }};
+
+function renderExercises() {
+    const container = document.getElementById('exercisesList');
+    container.innerHTML = '';
+
+    exercises.forEach((ex, index) => {
+        container.innerHTML += `
+            <div class="exercise-item">
+                <button type="button" class="btn btn-sm btn-danger btn-remove" onclick="removeExercise(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Nom de l'exercice"
+                               value="${ex.name || ''}" onchange="updateExercise(${index}, 'name', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="number" class="form-control form-control-sm" placeholder="Séries"
+                               value="${ex.sets || ''}" onchange="updateExercise(${index}, 'sets', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Reps"
+                               value="${ex.reps || ''}" onchange="updateExercise(${index}, 'reps', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Repos"
+                               value="${ex.rest || ''}" onchange="updateExercise(${index}, 'rest', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="RIR"
+                               value="${ex.rir || ''}" onchange="updateExercise(${index}, 'rir', this.value)">
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control form-control-sm" placeholder="Notes"
+                               value="${ex.notes || ''}" onchange="updateExercise(${index}, 'notes', this.value)">
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function renderMeals() {
+    const container = document.getElementById('mealsList');
+    container.innerHTML = '';
+
+    meals.forEach((meal, index) => {
+        container.innerHTML += `
+            <div class="meal-item">
+                <button type="button" class="btn btn-sm btn-danger btn-remove" onclick="removeMeal(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Nom du repas"
+                               value="${meal.meal_name || ''}" onchange="updateMeal(${index}, 'meal_name', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Heure"
+                               value="${meal.time || ''}" onchange="updateMeal(${index}, 'time', this.value)">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <input type="number" class="form-control form-control-sm" placeholder="Calories"
+                               value="${meal.calories || ''}" onchange="updateMeal(${index}, 'calories', this.value)">
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <textarea class="form-control form-control-sm" placeholder="Aliments" rows="2"
+                                  onchange="updateMeal(${index}, 'foods', this.value)">${meal.foods || ''}</textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control form-control-sm" placeholder="Macros (ex: P:30g C:40g L:15g)"
+                               value="${meal.macros || ''}" onchange="updateMeal(${index}, 'macros', this.value)">
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function addExercise() {
+    exercises.push({name: '', sets: '', reps: '', rest: '', rir: '', notes: ''});
+    renderExercises();
+}
+
+function removeExercise(index) {
+    exercises.splice(index, 1);
+    renderExercises();
+}
+
+function updateExercise(index, field, value) {
+    exercises[index][field] = value;
+}
+
+function addMeal() {
+    meals.push({meal_name: '', time: '', foods: '', calories: '', macros: ''});
+    renderMeals();
+}
+
+function removeMeal(index) {
+    meals.splice(index, 1);
+    renderMeals();
+}
+
+function updateMeal(index, field, value) {
+    meals[index][field] = value;
+}
+
+// Init
+renderExercises();
+renderMeals();
+
+// Before submit
+document.getElementById('dayForm').addEventListener('submit', function(e) {
+    document.getElementById('workout_exercises_json').value = JSON.stringify(exercises);
+    document.getElementById('diet_meals_json').value = JSON.stringify(meals);
+});
+</script>
+{% endblock %}

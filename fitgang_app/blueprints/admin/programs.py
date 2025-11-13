@@ -235,7 +235,7 @@ def edit_day(product_id, day_id):
             db.session.rollback()
             flash(f'Erreur: {str(e)}', 'danger')
 
-    return render_template('admin/programs/day_form.html', product=product, day=day)
+    return render_template('admin/programs/day_form_simple.html', product=product, day=day)
 
 
 @admin_programs_bp.route('/<int:product_id>/delete', methods=['POST'])

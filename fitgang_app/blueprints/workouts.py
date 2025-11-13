@@ -1,5 +1,5 @@
 """Workouts blueprint."""
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from fitgang_app.models import Workout, Exercise
 
@@ -30,7 +30,7 @@ def detail(workout_id):
     # Check if user has access
     if not current_user.is_admin() and not current_user.has_access_to_product(workout.product_id):
         flash('Vous devez acheter ce programme pour y accéder.', 'warning')
-        return redirect(url_for('shop.catalog'))
+        return redirect(url_for('shop.programs'))
 
     return render_template('workouts/detail.html', workout=workout)
 

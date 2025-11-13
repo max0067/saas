@@ -13,7 +13,8 @@ def generate_sitemap(app):
         static_pages = [
             ('main.index', 'daily', '1.0'),
             ('blog.list', 'daily', '0.9'),
-            ('shop.catalog', 'daily', '0.9'),
+            ('shop.programs', 'daily', '0.9'),
+            ('shop.ebooks', 'daily', '0.9'),
             ('calculators.index', 'weekly', '0.7'),
         ]
 

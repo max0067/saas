@@ -7,15 +7,18 @@ shop_bp = Blueprint('shop', __name__)
 
 @shop_bp.route('/')
 def catalog():
-    """Product catalog."""
+    """Product catalog - redirects to programs by default."""
+    return programs()
+
+
+@shop_bp.route('/programmes')
+def programs():
+    """Programs catalog."""
     page = request.args.get('page', 1, type=int)
-    product_type = request.args.get('type', None)
     difficulty = request.args.get('difficulty', None)
 
-    query = Product.query.filter_by(is_published=True)
+    query = Product.query.filter_by(is_published=True, product_type='program')
 
-    if product_type:
-        query = query.filter_by(product_type=product_type)
     if difficulty:
         query = query.filter_by(difficulty_level=difficulty)
 
@@ -23,7 +26,21 @@ def catalog():
         page=page, per_page=12, error_out=False
     )
 
-    return render_template('shop/catalog.html', products=products)
+    return render_template('shop/programs.html', products=products)
+
+
+@shop_bp.route('/ebooks')
+def ebooks():
+    """Ebooks catalog."""
+    page = request.args.get('page', 1, type=int)
+
+    query = Product.query.filter_by(is_published=True, product_type='ebook')
+
+    products = query.order_by(Product.created_at.desc()).paginate(
+        page=page, per_page=12, error_out=False
+    )
+
+    return render_template('shop/ebooks.html', products=products)
 
 
 @shop_bp.route('/<slug>')

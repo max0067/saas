@@ -18,7 +18,7 @@ def index():
 
     if not cart_items:
         flash('Votre panier est vide.', 'warning')
-        return redirect(url_for('shop.catalog'))
+        return redirect(url_for('shop.programs'))
 
     items = []
     total = 0
@@ -86,7 +86,7 @@ def success():
 
     if not payment_intent_id:
         flash('Commande invalide.', 'danger')
-        return redirect(url_for('shop.catalog'))
+        return redirect(url_for('shop.programs'))
 
     # Create order
     cart_items = session.get('cart', [])

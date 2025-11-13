@@ -1,6 +1,6 @@
 """Main blueprint."""
 from flask import Blueprint, render_template, send_file, current_app, abort
-from fitgang_app.models import BlogPost, Product, HomeContent
+from fitgang_app.models import BlogPost, Product
 from fitgang_app.utils.uploads import verify_signed_url_token
 import os
 
@@ -14,6 +14,7 @@ def index():
     featured_products = Product.query.filter_by(is_published=True, is_featured=True).limit(3).all()
 
     try:
+        from fitgang_app.models.home_content import HomeContent
         home_content = HomeContent.get_content()
     except Exception as e:
         # Fallback to default content if database error

@@ -61,13 +61,13 @@ def create_app(config_name=None):
     from fitgang_app.blueprints.gifts import gifts_bp
     from fitgang_app.blueprints.webhooks import webhooks_bp
     from fitgang_app.blueprints.api import api_bp
-    from fitgang_app.blueprints.debug_home import debug_home_bp
 
     # Admin blueprints
     from fitgang_app.blueprints.admin import (
         admin_bp, admin_users_bp, admin_products_bp,
-        admin_blog_bp, admin_analytics_bp, admin_affiliates_bp, admin_photos_bp, admin_gifts_bp, admin_home_editor_bp
+        admin_blog_bp, admin_analytics_bp, admin_affiliates_bp, admin_photos_bp, admin_gifts_bp
     )
+    # Temporarily disabled: admin_home_editor_bp
     from fitgang_app.blueprints.admin.programs import admin_programs_bp
     from fitgang_app.blueprints.admin.ebooks import admin_ebooks_bp
     from fitgang_app.blueprints.admin.supplements import admin_supplements_bp
@@ -86,7 +86,6 @@ def create_app(config_name=None):
     app.register_blueprint(gifts_bp, url_prefix='/gifts')
     app.register_blueprint(webhooks_bp, url_prefix='/webhooks')
     app.register_blueprint(api_bp, url_prefix='/api')
-    app.register_blueprint(debug_home_bp)
 
     # Admin blueprints
     app.register_blueprint(admin_bp, url_prefix='/admin')
@@ -100,7 +99,7 @@ def create_app(config_name=None):
     app.register_blueprint(admin_affiliates_bp, url_prefix='/admin/affiliates')
     app.register_blueprint(admin_photos_bp, url_prefix='/admin/photos')
     app.register_blueprint(admin_gifts_bp, url_prefix='/admin/gifts')
-    app.register_blueprint(admin_home_editor_bp, url_prefix='/admin/home-editor')
+    # Temporarily disabled: app.register_blueprint(admin_home_editor_bp, url_prefix='/admin/home-editor')
 
     # Register error handlers
     @app.errorhandler(404)

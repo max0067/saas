@@ -5,8 +5,8 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Set environment variables
-os.environ['FLASK_APP'] = 'app.py'
 os.environ['FLASK_ENV'] = 'production'
 
-# Import the Flask application
-from app import app as application
+# Import and create the Flask application
+from fitgang_app import create_app
+application = create_app('production')

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h2 class="text-center fw-bold mb-4">Créer un compte</h2>
+
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">{{ form.username.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">{{ form.email.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">{{ form.password.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password_confirm.label(class="form-label") }}
+                            {{ form.password_confirm(class="form-control" + (" is-invalid" if form.password_confirm.errors else "")) }}
+                            {% if form.password_confirm.errors %}
+                                <div class="invalid-feedback">{{ form.password_confirm.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.accept_terms(class="form-check-input" + (" is-invalid" if form.accept_terms.errors else "")) }}
+                            {{ form.accept_terms.label(class="form-check-label") }}
+                            {% if form.accept_terms.errors %}
+                                <div class="invalid-feedback">{{ form.accept_terms.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-danger btn-lg") }}
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <p class="text-center text-muted">
+                        Déjà un compte ? <a href="{{ url_for('auth.login') }}">Se connecter</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

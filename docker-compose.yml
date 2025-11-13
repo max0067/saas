@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: fitgang_web
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://fitgang:fitgang123@db:5432/fitgang_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-secret-key-change-in-production
+    volumes:
+      - .:/app
+      - uploads:/app/uploads
+    depends_on:
+      - db
+      - redis
+    command: python -m flask run --host=0.0.0.0
+
+  db:
+    image: postgres:15-alpine
+    container_name: fitgang_db
+    environment:
+      - POSTGRES_USER=fitgang
+      - POSTGRES_PASSWORD=fitgang123
+      - POSTGRES_DB=fitgang_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: fitgang_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Optional: Celery worker for background tasks
+  # worker:
+  #   build: .
+  #   container_name: fitgang_worker
+  #   command: celery -A app.celery worker --loglevel=info
+  #   environment:
+  #     - FLASK_ENV=development
+  #     - DATABASE_URL=postgresql://fitgang:fitgang123@db:5432/fitgang_db
+  #     - REDIS_URL=redis://redis:6379/0
+  #   depends_on:
+  #     - db
+  #     - redis
+  #   volumes:
+  #     - .:/app
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:

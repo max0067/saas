@@ -10,8 +10,14 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     """Homepage."""
-    from flask import Response
-    return Response("TEST - L'accueil fonctionne!", mimetype='text/plain')
+    featured_posts = BlogPost.query.filter_by(is_published=True, is_featured=True).limit(3).all()
+    featured_products = Product.query.filter_by(is_published=True, is_featured=True).limit(3).all()
+
+    return render_template(
+        'index.html',
+        featured_posts=featured_posts,
+        featured_products=featured_products
+    )
 
 
 @main_bp.route('/download/<token>')

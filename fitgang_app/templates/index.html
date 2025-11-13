@@ -9,27 +9,24 @@
         <div class="row align-items-center min-vh-75">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <h1 class="hero-title mb-4">
-                    {{ content.hero_title|safe }}
+                    Transforme ton corps.<br>
+                    Dépasse tes limites.
                 </h1>
                 <p class="hero-subtitle mb-5">
-                    {{ content.hero_subtitle }}
+                    Des programmes de sport et nutrition conçus pour des résultats concrets. Rejoins le mouvement.
                 </p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="{{ content.hero_button_link }}" class="btn btn-danger btn-lg">
-                        {{ content.hero_button_text }}
+                    <a href="{{ url_for('shop.programs') }}" class="btn btn-danger btn-lg">
+                        Commencer maintenant
                     </a>
-                    <a href="{{ content.hero_secondary_button_link }}" class="btn btn-outline-dark btn-lg">
-                        {{ content.hero_secondary_button_text }}
+                    <a href="{{ url_for('calculators.index') }}" class="btn btn-outline-dark btn-lg">
+                        Outils gratuits
                     </a>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="hero-image-wrapper">
-                    {% if content.hero_image.startswith('http') %}
-                        <img src="{{ content.hero_image }}" alt="Fitness FitGang" class="img-fluid rounded-4 shadow-lg">
-                    {% else %}
-                        <img src="{{ url_for('static', filename=content.hero_image) }}" alt="Fitness FitGang" class="img-fluid rounded-4 shadow-lg">
-                    {% endif %}
+                    <img src="{{ url_for('static', filename='assets/hero-image.svg') }}" alt="Fitness FitGang" class="img-fluid rounded-4 shadow-lg">
                 </div>
             </div>
         </div>
@@ -41,8 +38,8 @@
 <section class="section-products">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">{{ content.products_section_title }}</h2>
-            <p class="section-subtitle">{{ content.products_section_subtitle }}</p>
+            <h2 class="section-title">Programmes populaires</h2>
+            <p class="section-subtitle">Choisis le programme adapté à ton objectif</p>
         </div>
         <div class="row g-4">
             {% for product in featured_products %}
@@ -82,8 +79,8 @@
 <section class="section-blog bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">{{ content.blog_section_title }}</h2>
-            <p class="section-subtitle">{{ content.blog_section_subtitle }}</p>
+            <h2 class="section-title">Le blog FitGang</h2>
+            <p class="section-subtitle">Conseils, astuces et motivation pour progresser</p>
         </div>
         <div class="row g-4">
             {% for post in featured_posts %}
@@ -120,13 +117,13 @@
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
                 <h2 class="cta-title mb-4">
-                    {{ content.cta_title|safe }}
+                    Prêt à transformer<br>ton physique ?
                 </h2>
                 <p class="cta-subtitle mb-5">
-                    {{ content.cta_subtitle }}
+                    Rejoins des milliers de personnes qui progressent chaque jour avec FitGang.
                 </p>
-                <a href="{{ content.cta_button_link }}" class="btn btn-light btn-lg px-5">
-                    {{ content.cta_button_text }}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5">
+                    Commence gratuitement
                 </a>
             </div>
         </div>

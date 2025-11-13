@@ -41,6 +41,11 @@ def create():
         if post.category_id == 0:
             post.category_id = None
 
+        # Si publié, définir la date de publication
+        if post.is_published:
+            from datetime import datetime
+            post.published_at = datetime.utcnow()
+
         if not post.slug:
             post.slug = slugify(post.title)
 
@@ -76,6 +81,11 @@ def edit(post_id):
         # Si aucune catégorie sélectionnée (0), mettre à None
         if post.category_id == 0:
             post.category_id = None
+
+        # Si publié et pas encore de date de publication, définir maintenant
+        if post.is_published and not post.published_at:
+            from datetime import datetime
+            post.published_at = datetime.utcnow()
 
         if form.featured_image.data:
             success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')

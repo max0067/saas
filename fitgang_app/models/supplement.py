@@ -1,5 +1,6 @@
 """Supplement models for dietary supplements and affiliate products."""
 from datetime import datetime
+import json
 from fitgang_app import db
 
 
@@ -22,14 +23,14 @@ class Supplement(db.Model):
 
     # Media
     image_url = db.Column(db.String(500))
-    gallery_images = db.Column(db.JSON)  # Array of image URLs
+    _gallery_images = db.Column('gallery_images', db.Text)  # Stored as JSON TEXT
 
     # Affiliate link
     affiliate_link = db.Column(db.String(500), nullable=False)
     affiliate_code = db.Column(db.String(100))
 
     # Display information
-    benefits = db.Column(db.JSON)  # Array of benefit strings
+    _benefits = db.Column('benefits', db.Text)  # Stored as JSON TEXT
     usage_instructions = db.Column(db.Text)
     ingredients = db.Column(db.Text)
     warnings = db.Column(db.Text)
@@ -53,6 +54,46 @@ class Supplement(db.Model):
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @property
+    def gallery_images(self):
+        """Get gallery images as Python list."""
+        if self._gallery_images:
+            try:
+                return json.loads(self._gallery_images)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
+
+    @gallery_images.setter
+    def gallery_images(self, value):
+        """Set gallery images from Python list."""
+        if value is None:
+            self._gallery_images = None
+        elif isinstance(value, str):
+            self._gallery_images = value
+        else:
+            self._gallery_images = json.dumps(value) if value else None
+
+    @property
+    def benefits(self):
+        """Get benefits as Python list."""
+        if self._benefits:
+            try:
+                return json.loads(self._benefits)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
+
+    @benefits.setter
+    def benefits(self, value):
+        """Set benefits from Python list."""
+        if value is None:
+            self._benefits = None
+        elif isinstance(value, str):
+            self._benefits = value
+        else:
+            self._benefits = json.dumps(value) if value else None
 
     def increment_views(self):
         """Increment product views."""

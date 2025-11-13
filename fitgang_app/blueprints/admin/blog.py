@@ -76,25 +76,44 @@ def edit(post_id):
     form.category_id.choices = [(0, '-- Aucune catégorie --')] + [(c.id, c.name) for c in categories]
 
     if form.validate_on_submit():
-        form.populate_obj(post)
+        try:
+            # Récupérer les données du formulaire manuellement pour mieux contrôler
+            post.title = form.title.data
+            post.slug = form.slug.data if form.slug.data else slugify(form.title.data)
+            post.content = form.content.data
+            post.excerpt = form.excerpt.data
+            post.meta_title = form.meta_title.data
+            post.meta_description = form.meta_description.data
+            post.meta_keywords = form.meta_keywords.data
+            post.is_published = form.is_published.data
+            post.is_featured = form.is_featured.data
 
-        # Si aucune catégorie sélectionnée (0), mettre à None
-        if post.category_id == 0:
-            post.category_id = None
+            # Gérer la catégorie
+            category_id = form.category_id.data
+            if category_id == 0 or category_id is None:
+                post.category_id = None
+            else:
+                post.category_id = category_id
 
-        # Si publié et pas encore de date de publication, définir maintenant
-        if post.is_published and not post.published_at:
-            from datetime import datetime
-            post.published_at = datetime.utcnow()
+            # Si publié et pas encore de date de publication, définir maintenant
+            if post.is_published and not post.published_at:
+                from datetime import datetime
+                post.published_at = datetime.utcnow()
 
-        if form.featured_image.data:
-            success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')
-            if success:
-                post.featured_image = file_path
+            # Gérer l'image
+            if form.featured_image.data:
+                success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')
+                if success:
+                    post.featured_image = file_path
 
-        db.session.commit()
-        flash('Article mis à jour!', 'success')
-        return redirect(url_for('admin_blog.index'))
+            db.session.commit()
+            flash('Article mis à jour!', 'success')
+            return redirect(url_for('admin_blog.index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de la mise à jour: {str(e)}', 'danger')
+            import traceback
+            print(traceback.format_exc())
 
     return render_template('admin/blog_form.html', form=form, post=post, title='Modifier l\'article')
 

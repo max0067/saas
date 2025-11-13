@@ -33,13 +33,18 @@ def index():
         UserPhoto.uploaded_at.desc()
     ).limit(6).all()
 
-    # Get weight tracking data
-    weight_entries = WeightEntry.query.filter_by(user_id=current_user.id).order_by(
-        WeightEntry.recorded_at.desc()
-    ).limit(30).all()
+    # Get weight tracking data (with error handling for missing table)
+    weight_entries = []
+    weight_stats = None
+    try:
+        weight_entries = WeightEntry.query.filter_by(user_id=current_user.id).order_by(
+            WeightEntry.recorded_at.desc()
+        ).limit(30).all()
+    except Exception:
+        # Table might not exist yet, silently continue
+        pass
 
     # Calculate weight stats
-    weight_stats = None
     if weight_entries:
         current_weight = weight_entries[0].weight if weight_entries else None
         starting_weight = weight_entries[-1].weight if len(weight_entries) > 0 else None
@@ -109,8 +114,11 @@ def add_weight():
         db.session.commit()
 
         flash('Poids enregistré avec succès!', 'success')
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         flash('Erreur lors de l\'enregistrement du poids.', 'danger')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erreur: La table weight_entries n\'existe pas encore. Contactez l\'admin.', 'danger')
 
     return redirect(url_for('dashboard.index'))
 

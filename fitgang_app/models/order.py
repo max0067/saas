@@ -48,6 +48,9 @@ class Order(db.Model):
     access_code = db.Column(db.String(100), unique=True)  # Unique code for accessing products
     access_link_sent = db.Column(db.Boolean, default=False)
 
+    # Notes (for admin gifts, etc.)
+    notes = db.Column(db.Text)
+
     # Timestamps
     completed_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

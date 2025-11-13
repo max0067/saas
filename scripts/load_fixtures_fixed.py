@@ -166,7 +166,7 @@ def create_fixtures():
             }
         ]
 
-        for prod_data in products:
+        for idx, prod_data in enumerate(products, start=1):
             product = Product(
                 title=prod_data['title'],
                 slug=slugify(prod_data['title']),
@@ -176,7 +176,7 @@ def create_fixtures():
                 duration_weeks=prod_data.get('duration_weeks'),
                 description=prod_data['description'],
                 short_description=prod_data['description'][:100],
-                sku=f"FG-{prod_data['title'][:5].upper()}",
+                sku=f"FG-PROD-{idx:03d}",
                 is_published=True,
                 is_featured=prod_data['is_featured'],
                 author=prod_data.get('author'),

@@ -46,7 +46,11 @@
                         <tr>
                             <td>
                                 {% if post.featured_image %}
-                                <img src="{{ post.featured_image }}" alt="{{ post.title }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded">
+                                    {% if post.featured_image.startswith('http') %}
+                                        <img src="{{ post.featured_image }}" alt="{{ post.title }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded">
+                                    {% else %}
+                                        <img src="/uploads/{{ post.featured_image }}" alt="{{ post.title }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded">
+                                    {% endif %}
                                 {% else %}
                                 <div style="width: 60px; height: 60px;" class="bg-light rounded d-flex align-items-center justify-content-center">
                                     <i class="bi bi-image text-muted"></i>

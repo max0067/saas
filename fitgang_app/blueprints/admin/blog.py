@@ -63,10 +63,11 @@ def create():
 def edit(post_id):
     """Edit blog post."""
     post = BlogPost.query.get_or_404(post_id)
-    form = BlogPostForm(obj=post)
 
-    # Définir les choices pour le SelectField category_id
+    # Définir les choices pour le SelectField category_id AVANT de créer le form
     categories = BlogCategory.query.all()
+
+    form = BlogPostForm(obj=post)
     form.category_id.choices = [(0, '-- Aucune catégorie --')] + [(c.id, c.name) for c in categories]
 
     if form.validate_on_submit():

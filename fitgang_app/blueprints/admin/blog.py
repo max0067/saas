@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user
 from fitgang_app import db
-from fitgang_app.models import BlogPost
+from fitgang_app.models import BlogPost, BlogCategory
 from fitgang_app.forms.blog import BlogPostForm
 from fitgang_app.utils.decorators import admin_required
 from fitgang_app.utils.uploads import save_uploaded_file
@@ -29,9 +29,17 @@ def create():
     """Create blog post."""
     form = BlogPostForm()
 
+    # Définir les choices pour le SelectField category_id
+    categories = BlogCategory.query.all()
+    form.category_id.choices = [(0, '-- Aucune catégorie --')] + [(c.id, c.name) for c in categories]
+
     if form.validate_on_submit():
         post = BlogPost(author_id=current_user.id)
         form.populate_obj(post)
+
+        # Si aucune catégorie sélectionnée (0), mettre à None
+        if post.category_id == 0:
+            post.category_id = None
 
         if not post.slug:
             post.slug = slugify(post.title)
@@ -57,8 +65,16 @@ def edit(post_id):
     post = BlogPost.query.get_or_404(post_id)
     form = BlogPostForm(obj=post)
 
+    # Définir les choices pour le SelectField category_id
+    categories = BlogCategory.query.all()
+    form.category_id.choices = [(0, '-- Aucune catégorie --')] + [(c.id, c.name) for c in categories]
+
     if form.validate_on_submit():
         form.populate_obj(post)
+
+        # Si aucune catégorie sélectionnée (0), mettre à None
+        if post.category_id == 0:
+            post.category_id = None
 
         if form.featured_image.data:
             success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')

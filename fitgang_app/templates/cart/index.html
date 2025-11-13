@@ -15,7 +15,11 @@
                         <div class="row align-items-center">
                             <div class="col-md-2">
                                 {% if item.product.image_url %}
-                                <img src="{{ item.product.image_url }}" class="img-fluid" alt="{{ item.product.title }}">
+                                    {% if item.product.image_url.startswith('http') %}
+                                        <img src="{{ item.product.image_url }}" class="img-fluid rounded" alt="{{ item.product.title }}">
+                                    {% else %}
+                                        <img src="/uploads/{{ item.product.image_url }}" class="img-fluid rounded" alt="{{ item.product.title }}">
+                                    {% endif %}
                                 {% endif %}
                             </div>
                             <div class="col-md-6">
@@ -59,7 +63,7 @@
         <div class="alert alert-info">
             <i class="bi bi-cart-x"></i> Votre panier est vide.
         </div>
-        <a href="{{ url_for('shop.index') }}" class="btn btn-danger">Voir la boutique</a>
+        <a href="{{ url_for('shop.programs') }}" class="btn btn-danger">Voir les programmes</a>
     {% endif %}
 </div>
 {% endblock %}

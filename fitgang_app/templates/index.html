@@ -4,21 +4,30 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section bg-light py-5">
+<section class="hero-section">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Transformez votre corps avec FitGang</h1>
-                <p class="lead text-muted mb-4">
-                    Programmes de sport, plans nutritionnels et coaching personnalisé pour atteindre vos objectifs fitness.
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="hero-title mb-4">
+                    Transforme ton corps.<br>
+                    Dépasse tes limites.
+                </h1>
+                <p class="hero-subtitle mb-5">
+                    Des programmes de sport et nutrition conçus pour des résultats concrets. Rejoins le mouvement.
                 </p>
-                <div class="d-flex gap-3">
-                    <a href="{{ url_for('shop.catalog') }}" class="btn btn-danger btn-lg">Découvrir nos programmes</a>
-                    <a href="{{ url_for('calculators.index') }}" class="btn btn-outline-dark btn-lg">Calculateurs gratuits</a>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('shop.catalog') }}" class="btn btn-danger btn-lg">
+                        Commencer maintenant
+                    </a>
+                    <a href="{{ url_for('calculators.index') }}" class="btn btn-outline-dark btn-lg">
+                        Outils gratuits
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="{{ url_for('static', filename='assets/hero-image.jpg') }}" alt="Fitness" class="img-fluid rounded-3 shadow-sm">
+                <div class="hero-image-wrapper">
+                    <img src="{{ url_for('static', filename='assets/hero-image.jpg') }}" alt="Fitness FitGang" class="img-fluid rounded-4 shadow-lg">
+                </div>
             </div>
         </div>
     </div>
@@ -26,28 +35,40 @@
 
 <!-- Featured Products -->
 {% if featured_products %}
-<section class="py-5">
+<section class="section-products">
     <div class="container">
-        <h2 class="text-center fw-bold mb-5">Programmes en vedette</h2>
+        <div class="text-center mb-5">
+            <h2 class="section-title">Programmes populaires</h2>
+            <p class="section-subtitle">Choisis le programme adapté à ton objectif</p>
+        </div>
         <div class="row g-4">
             {% for product in featured_products %}
-            <div class="col-md-4">
-                <div class="card product-card h-100 border-0 shadow-sm">
+            <div class="col-lg-4 col-md-6">
+                <div class="card product-card h-100">
                     {% if product.image_url %}
-                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                    <div class="product-image-wrapper">
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                        <span class="product-badge">{{ product.product_type.value }}</span>
+                    </div>
                     {% endif %}
-                    <div class="card-body">
-                        <span class="badge bg-danger mb-2">{{ product.product_type.value }}</span>
-                        <h5 class="card-title fw-bold">{{ product.title }}</h5>
-                        <p class="card-text text-muted">{{ product.short_description }}</p>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-3">{{ product.title }}</h5>
+                        <p class="card-text text-muted mb-4 flex-grow-1">{{ product.short_description }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 text-danger">{{ product.price }}€</span>
-                            <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="btn btn-outline-danger">Voir plus</a>
+                            <span class="product-price">{{ product.price }}€</span>
+                            <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="btn btn-dark btn-sm">
+                                Découvrir
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{{ url_for('shop.catalog') }}" class="btn btn-outline-dark btn-lg">
+                Voir tous les programmes
+            </a>
         </div>
     </div>
 </section>
@@ -55,35 +76,57 @@
 
 <!-- Featured Blog Posts -->
 {% if featured_posts %}
-<section class="py-5 bg-light">
+<section class="section-blog bg-light">
     <div class="container">
-        <h2 class="text-center fw-bold mb-5">Derniers articles</h2>
+        <div class="text-center mb-5">
+            <h2 class="section-title">Le blog FitGang</h2>
+            <p class="section-subtitle">Conseils, astuces et motivation pour progresser</p>
+        </div>
         <div class="row g-4">
             {% for post in featured_posts %}
-            <div class="col-md-4">
-                <div class="card blog-card h-100 border-0 shadow-sm">
+            <div class="col-lg-4 col-md-6">
+                <article class="card blog-card h-100">
                     {% if post.featured_image %}
-                    <img src="{{ post.featured_image }}" class="card-img-top" alt="{{ post.title }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ post.title }}</h5>
-                        <p class="card-text text-muted">{{ post.excerpt }}</p>
-                        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="btn btn-sm btn-outline-dark">Lire plus</a>
+                    <div class="blog-image-wrapper">
+                        <img src="{{ post.featured_image }}" class="card-img-top" alt="{{ post.title }}">
                     </div>
-                </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-3">{{ post.title }}</h5>
+                        <p class="card-text text-muted mb-4 flex-grow-1">{{ post.excerpt }}</p>
+                        <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="blog-link">
+                            Lire l'article →
+                        </a>
+                    </div>
+                </article>
             </div>
             {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{{ url_for('blog.list') }}" class="btn btn-dark btn-lg">
+                Tous les articles
+            </a>
         </div>
     </div>
 </section>
 {% endif %}
 
 <!-- CTA Section -->
-<section class="cta-section py-5 bg-danger text-white">
-    <div class="container text-center">
-        <h2 class="fw-bold mb-3">Prêt à commencer votre transformation ?</h2>
-        <p class="lead mb-4">Rejoignez des milliers de personnes qui ont déjà transformé leur corps avec FitGang</p>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">Créer un compte gratuit</a>
+<section class="section-cta">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="cta-title mb-4">
+                    Prêt à transformer<br>ton physique ?
+                </h2>
+                <p class="cta-subtitle mb-5">
+                    Rejoins des milliers de personnes qui progressent chaque jour avec FitGang.
+                </p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5">
+                    Commence gratuitement
+                </a>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

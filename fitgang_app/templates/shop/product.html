@@ -3,48 +3,69 @@
 {% block title %}{{ product.title }} - {{ site_name }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-6">
-            {% if product.image_url %}
-            <img src="{{ product.image_url }}" class="img-fluid rounded" alt="{{ product.title }}">
-            {% else %}
-            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
-                <i class="bi bi-image" style="font-size: 4rem;"></i>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="col-md-6">
-            {% if product.is_featured %}
-            <span class="badge bg-danger mb-2">⭐ Populaire</span>
-            {% endif %}
-            <h1 class="mb-3">{{ product.title }}</h1>
-
-            <div class="mb-3">
-                {% if product.difficulty_level %}
-                <span class="badge bg-secondary">{{ product.difficulty_level }}</span>
-                {% endif %}
-                {% if product.duration_weeks %}
-                <span class="badge bg-info">{{ product.duration_weeks }} semaines</span>
-                {% endif %}
+<section class="product-detail-section">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-6">
+                <div class="product-detail-image">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="img-fluid rounded-4" alt="{{ product.title }}">
+                    {% else %}
+                    <div class="product-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="mb-4">
-                <h2 class="text-danger">{{ "%.2f"|format(product.price) }} €</h2>
-            </div>
+            <div class="col-lg-6">
+                <div class="product-detail-content">
+                    {% if product.is_featured %}
+                    <span class="product-badge-inline">🔥 Populaire</span>
+                    {% endif %}
 
-            <div class="mb-4">
-                {{ product.description|safe }}
-            </div>
+                    <h1 class="product-detail-title">{{ product.title }}</h1>
 
-            <form method="POST" action="{{ url_for('cart.add', product_id=product.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button type="submit" class="btn btn-danger btn-lg w-100">
-                    <i class="bi bi-cart-plus"></i> Ajouter au panier
-                </button>
-            </form>
+                    <div class="product-meta mb-4">
+                        {% if product.difficulty_level %}
+                        <span class="meta-badge">
+                            <i class="bi bi-bar-chart"></i> {{ product.difficulty_level }}
+                        </span>
+                        {% endif %}
+                        {% if product.duration_weeks %}
+                        <span class="meta-badge">
+                            <i class="bi bi-calendar-check"></i> {{ product.duration_weeks }} semaines
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-price-wrapper">
+                        <span class="product-detail-price">{{ "%.2f"|format(product.price) }} €</span>
+                        <span class="price-label">Paiement unique</span>
+                    </div>
+
+                    <div class="product-description">
+                        {{ product.description|safe }}
+                    </div>
+
+                    <form method="POST" action="{{ url_for('cart.add', product_id=product.id) }}" class="mt-5">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3">
+                            <i class="bi bi-cart-plus me-2"></i> Ajouter au panier
+                        </button>
+                    </form>
+
+                    <div class="product-features mt-5">
+                        <h6 class="features-title">Ce que tu obtiens :</h6>
+                        <ul class="features-list">
+                            <li><i class="bi bi-check-circle-fill"></i> Accès à vie au programme</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Mises à jour gratuites</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Support par email</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

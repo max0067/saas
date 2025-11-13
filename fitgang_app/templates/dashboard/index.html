@@ -1,51 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Tableau de bord - {{ site_name }}{% endblock %}
+{% block title %}Dashboard - {{ site_name }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="mb-4">Bienvenue, {{ current_user.username }} !</h1>
+<section class="dashboard-section">
+    <div class="container">
+        <div class="dashboard-header mb-5">
+            <h1 class="dashboard-title">
+                Hey {{ current_user.username }} ! 👋
+            </h1>
+            <p class="dashboard-subtitle">Prêt à tout donner aujourd'hui ?</p>
+        </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-bag"></i> Mes Programmes</h5>
-                    <p class="card-text">Accédez à vos programmes achetés</p>
-                    <a href="{{ url_for('profile.products') }}" class="btn btn-danger">Voir mes programmes</a>
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <h3 class="dashboard-card-title">Mes Programmes</h3>
+                    <p class="dashboard-card-text">Accède à tes programmes et commence à t'entraîner</p>
+                    <a href="{{ url_for('profile.products') }}" class="btn btn-dark w-100">
+                        Voir mes programmes
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <h3 class="dashboard-card-title">Mes Entraînements</h3>
+                    <p class="dashboard-card-text">Suis ta progression et tes séances</p>
+                    <a href="{{ url_for('workouts.index') }}" class="btn btn-dark w-100">
+                        Voir mes entraînements
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <h3 class="dashboard-card-title">Calculatrices</h3>
+                    <p class="dashboard-card-text">Calcule ton IMC, tes besoins caloriques, etc.</p>
+                    <a href="{{ url_for('calculators.index') }}" class="btn btn-dark w-100">
+                        Utiliser les outils
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Mes Entraînements</h5>
-                    <p class="card-text">Suivez vos entraînements</p>
-                    <a href="{{ url_for('workouts.index') }}" class="btn btn-danger">Voir mes entraînements</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-calculator"></i> Calculatrices</h5>
-                    <p class="card-text">Outils de calcul fitness</p>
-                    <a href="{{ url_for('calculators.index') }}" class="btn btn-danger">Accéder</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Mes Commandes Récentes</h5>
+        <div class="row">
+            <div class="col-12">
+                <div class="dashboard-orders-card">
+                    <h3 class="dashboard-orders-title">
+                        <i class="bi bi-receipt"></i> Mes Commandes Récentes
+                    </h3>
                     {% if recent_orders %}
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="dashboard-table">
                                 <thead>
                                     <tr>
                                         <th>N° Commande</th>
@@ -57,21 +73,27 @@
                                 <tbody>
                                     {% for order in recent_orders %}
                                     <tr>
-                                        <td>#{{ order.id }}</td>
+                                        <td><strong>#{{ order.id }}</strong></td>
                                         <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
-                                        <td>{{ "%.2f"|format(order.total) }} €</td>
-                                        <td><span class="badge bg-success">{{ order.status }}</span></td>
+                                        <td><strong>{{ "%.2f"|format(order.total) }} €</strong></td>
+                                        <td><span class="status-badge success">{{ order.status }}</span></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     {% else %}
-                        <p>Aucune commande pour le moment.</p>
+                        <div class="empty-state">
+                            <i class="bi bi-cart-x"></i>
+                            <p>Aucune commande pour le moment.</p>
+                            <a href="{{ url_for('shop.catalog') }}" class="btn btn-danger">
+                                Découvrir les programmes
+                            </a>
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

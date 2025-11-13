@@ -2,98 +2,508 @@
 
 {% block title %}Dashboard - {{ site_name }}{% endblock %}
 
-{% block content %}
-<section class="dashboard-section">
-    <div class="container">
-        <div class="dashboard-header mb-5">
-            <h1 class="dashboard-title">
-                Hey {{ current_user.username }} ! 👋
-            </h1>
-            <p class="dashboard-subtitle">Prêt à tout donner aujourd'hui ?</p>
-        </div>
+{% block extra_css %}
+<style>
+:root {
+    --apple-blue: #007AFF;
+    --apple-gray: #F5F5F7;
+    --apple-dark: #1D1D1F;
+}
 
-        <div class="row g-4 mb-5">
+body {
+    background: var(--apple-gray);
+}
+
+.dashboard-header {
+    background: white;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid #e5e5e7;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    font-size: 1.125rem;
+    color: #6e6e73;
+    font-weight: 400;
+}
+
+.stats-grid {
+    padding: 40px 0;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.blue {
+    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+}
+
+.stat-icon.green {
+    background: linear-gradient(135deg, #34C759 0%, #30B94D 100%);
+}
+
+.stat-icon.orange {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.9375rem;
+    color: #6e6e73;
+    font-weight: 500;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    letter-spacing: -0.01em;
+}
+
+.photos-section {
+    padding: 40px 0;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.photo-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.photo-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.photo-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.photo-image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.photo-badge.before {
+    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+}
+
+.photo-badge.after {
+    background: linear-gradient(135deg, #34C759 0%, #30B94D 100%);
+}
+
+.photo-badge.progress {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+}
+
+.photo-info {
+    padding: 16px;
+}
+
+.photo-date {
+    font-size: 0.875rem;
+    color: #6e6e73;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.photo-weight {
+    font-size: 0.9375rem;
+    color: var(--apple-dark);
+    font-weight: 600;
+}
+
+.upload-card {
+    background: white;
+    border: 2px dashed #c7c7cc;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+}
+
+.upload-card:hover {
+    border-color: var(--apple-blue);
+    background: #f8f9fa;
+}
+
+.upload-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--apple-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 1.75rem;
+    color: var(--apple-blue);
+}
+
+.upload-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 8px;
+}
+
+.upload-subtitle {
+    font-size: 0.9375rem;
+    color: #6e6e73;
+}
+
+.programs-section {
+    padding: 40px 0 80px;
+}
+
+.program-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.program-card:hover {
+    transform: translateX(8px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.program-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.program-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.program-details h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 4px;
+}
+
+.program-details p {
+    font-size: 0.875rem;
+    color: #6e6e73;
+    margin: 0;
+}
+
+.btn-access {
+    background: var(--apple-blue);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-access:hover {
+    background: #0051D5;
+    color: white;
+    transform: scale(1.05);
+}
+
+.empty-state {
+    background: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--apple-gray);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    color: #6e6e73;
+}
+
+.empty-state h3 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: #6e6e73;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 2rem;
+    }
+
+    .photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .program-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-header">
+    <div class="container">
+        <h1 class="dashboard-title animate__animated animate__fadeInUp">
+            Hey {{ current_user.username }} ! 👋
+        </h1>
+        <p class="dashboard-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+            Prêt à tout donner aujourd'hui ?
+        </p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <div class="container">
+        <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-icon">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
                         <i class="bi bi-bag-check"></i>
                     </div>
-                    <h3 class="dashboard-card-title">Mes Programmes</h3>
-                    <p class="dashboard-card-text">Accède à tes programmes et commence à t'entraîner</p>
-                    <a href="{{ url_for('profile.purchases') }}" class="btn btn-dark w-100">
-                        Voir mes programmes
-                    </a>
+                    <div class="stat-value">{{ recent_orders|length }}</div>
+                    <div class="stat-label">Programmes actifs</div>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-6">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-icon">
-                        <i class="bi bi-clipboard-check"></i>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="bi bi-lightning-charge"></i>
                     </div>
-                    <h3 class="dashboard-card-title">Mes Entraînements</h3>
-                    <p class="dashboard-card-text">Suis ta progression et tes séances</p>
-                    <a href="{{ url_for('workouts.list') }}" class="btn btn-dark w-100">
-                        Voir mes entraînements
-                    </a>
+                    <div class="stat-value">{{ total_workouts }}</div>
+                    <div class="stat-label">Entraînements complétés</div>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-6">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-icon">
-                        <i class="bi bi-calculator"></i>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="bi bi-images"></i>
                     </div>
-                    <h3 class="dashboard-card-title">Calculatrices</h3>
-                    <p class="dashboard-card-text">Calcule ton IMC, tes besoins caloriques, etc.</p>
-                    <a href="{{ url_for('calculators.index') }}" class="btn btn-dark w-100">
-                        Utiliser les outils
-                    </a>
+                    <div class="stat-value">{{ user_photos|length }}</div>
+                    <div class="stat-label">Photos progression</div>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="dashboard-orders-card">
-                    <h3 class="dashboard-orders-title">
-                        <i class="bi bi-receipt"></i> Mes Commandes Récentes
-                    </h3>
-                    {% if recent_orders %}
-                        <div class="table-responsive">
-                            <table class="dashboard-table">
-                                <thead>
-                                    <tr>
-                                        <th>N° Commande</th>
-                                        <th>Date</th>
-                                        <th>Montant</th>
-                                        <th>Statut</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for order in recent_orders %}
-                                    <tr>
-                                        <td><strong>#{{ order.id }}</strong></td>
-                                        <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
-                                        <td><strong>{{ "%.2f"|format(order.total_amount) }} €</strong></td>
-                                        <td><span class="status-badge success">{{ order.status.value }}</span></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="empty-state">
-                            <i class="bi bi-cart-x"></i>
-                            <p>Aucune commande pour le moment.</p>
-                            <a href="{{ url_for('shop.programs') }}" class="btn btn-danger">
-                                Découvrir les programmes
-                            </a>
-                        </div>
+<section class="photos-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Ma Progression</h2>
+            <a href="{{ url_for('profile.photos') }}" class="btn-access">
+                Voir toutes mes photos
+            </a>
+        </div>
+
+        {% if user_photos %}
+        <div class="photos-grid">
+            {% for photo in user_photos[:5] %}
+            <div class="photo-card">
+                <div class="photo-image-wrapper">
+                    <img src="/uploads/{{ photo.filename }}"
+                         alt="{{ photo.photo_type.value }}"
+                         loading="lazy">
+                    <span class="photo-badge {{ photo.photo_type.value }}">
+                        {% if photo.photo_type.value == 'before' %}
+                            Avant
+                        {% elif photo.photo_type.value == 'after' %}
+                            Après
+                        {% else %}
+                            Progrès
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-date">
+                        {{ photo.uploaded_at.strftime('%d/%m/%Y') }}
+                    </div>
+                    {% if photo.weight_kg %}
+                    <div class="photo-weight">
+                        {{ photo.weight_kg }} kg
+                    </div>
                     {% endif %}
                 </div>
             </div>
+            {% endfor %}
+
+            <a href="{{ url_for('profile.photos') }}" class="upload-card">
+                <div class="upload-icon">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <div class="upload-title">Ajouter une photo</div>
+                <div class="upload-subtitle">Suivi ta progression</div>
+            </a>
         </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-camera"></i>
+            </div>
+            <h3>Commence ton suivi photo</h3>
+            <p>Prends des photos avant/après pour suivre ta transformation</p>
+            <a href="{{ url_for('profile.photos') }}" class="btn-access">
+                Ajouter ma première photo
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="programs-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Mes Programmes</h2>
+        </div>
+
+        {% if recent_orders %}
+            {% for order in recent_orders %}
+                {% for item in order.items %}
+                <div class="program-card">
+                    <div class="program-info">
+                        <div class="program-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <div class="program-details">
+                            <h4>{{ item.product_name }}</h4>
+                            <p>Acheté le {{ order.created_at.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('shop.product_detail', slug=item.product.slug) }}" class="btn-access">
+                        Accéder
+                    </a>
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-inbox"></i>
+            </div>
+            <h3>Aucun programme pour le moment</h3>
+            <p>Découvre nos programmes d'entraînement et ebooks pour commencer</p>
+            <a href="{{ url_for('shop.programs') }}" class="btn-access">
+                Découvrir les programmes
+            </a>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

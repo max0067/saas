@@ -5,8 +5,15 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from flask import current_app, url_for
 from itsdangerous import URLSafeTimedSerializer
-import boto3
-from botocore.exceptions import ClientError
+
+# Import boto3 only if available
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+    BOTO3_AVAILABLE = True
+except ImportError:
+    BOTO3_AVAILABLE = False
+    ClientError = Exception  # Fallback
 
 
 def allowed_file(filename, file_type='image'):
@@ -57,8 +64,8 @@ def save_uploaded_file(file, folder='uploads', file_type='image'):
     original_filename = secure_filename(file.filename)
     unique_filename = generate_unique_filename(original_filename)
 
-    # Use S3 if configured
-    if current_app.config.get('USE_S3'):
+    # Use S3 if configured and available
+    if current_app.config.get('USE_S3') and BOTO3_AVAILABLE:
         return upload_to_s3(file, unique_filename, folder)
     else:
         return save_to_local(file, unique_filename, folder)

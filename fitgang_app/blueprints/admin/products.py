@@ -29,30 +29,42 @@ def create():
     form = ProductForm()
 
     if form.validate_on_submit():
-        product = Product()
-        form.populate_obj(product)
+        try:
+            product = Product()
 
-        # Generate slug if not provided
-        if not product.slug:
-            product.slug = slugify(product.title)
+            # Manual field assignment for safety
+            product.title = form.title.data
+            product.slug = form.slug.data if form.slug.data else slugify(form.title.data)
+            product.short_description = form.short_description.data
+            product.description = form.description.data
+            product.product_type = form.product_type.data
+            product.difficulty_level = form.difficulty_level.data if form.difficulty_level.data else None
+            product.price = form.price.data
+            product.original_price = form.original_price.data
+            product.duration_weeks = form.duration_weeks.data
+            product.is_published = form.is_published.data
+            product.is_featured = form.is_featured.data
 
-        # Handle image upload
-        if form.image.data:
-            success, file_path = save_uploaded_file(form.image.data, folder='products', file_type='image')
-            if success:
-                product.image_url = file_path
+            # Handle image upload safely
+            if hasattr(form, 'image') and form.image.data and hasattr(form.image.data, 'filename') and form.image.data.filename:
+                try:
+                    success, file_path = save_uploaded_file(form.image.data, folder='products', file_type='image')
+                    if success:
+                        product.image_url = file_path
+                    else:
+                        flash(f'Avertissement: {file_path}', 'warning')
+                except Exception as e:
+                    flash(f'Erreur upload image: {str(e)}', 'warning')
 
-        # Handle file upload (for ebooks)
-        if form.file.data:
-            success, file_path = save_uploaded_file(form.file.data, folder='products/files', file_type='document')
-            if success:
-                product.file_path = file_path
+            db.session.add(product)
+            db.session.commit()
 
-        db.session.add(product)
-        db.session.commit()
+            flash('Produit créé avec succès!', 'success')
+            return redirect(url_for('admin_products.index'))
 
-        flash('Produit créé avec succès!', 'success')
-        return redirect(url_for('admin_products.index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de la création: {str(e)}', 'danger')
 
     return render_template('admin/product_form.html', form=form, title='Créer un produit')
 
@@ -65,23 +77,38 @@ def edit(product_id):
     form = ProductForm(obj=product)
 
     if form.validate_on_submit():
-        form.populate_obj(product)
+        try:
+            # Manual field assignment for safety
+            product.title = form.title.data
+            product.slug = form.slug.data if form.slug.data else slugify(form.title.data)
+            product.short_description = form.short_description.data
+            product.description = form.description.data
+            product.product_type = form.product_type.data
+            product.difficulty_level = form.difficulty_level.data if form.difficulty_level.data else None
+            product.price = form.price.data
+            product.original_price = form.original_price.data
+            product.duration_weeks = form.duration_weeks.data
+            product.is_published = form.is_published.data
+            product.is_featured = form.is_featured.data
 
-        # Handle image upload
-        if form.image.data:
-            success, file_path = save_uploaded_file(form.image.data, folder='products', file_type='image')
-            if success:
-                product.image_url = file_path
+            # Handle image upload safely
+            if hasattr(form, 'image') and form.image.data and hasattr(form.image.data, 'filename') and form.image.data.filename:
+                try:
+                    success, file_path = save_uploaded_file(form.image.data, folder='products', file_type='image')
+                    if success:
+                        product.image_url = file_path
+                    else:
+                        flash(f'Avertissement: {file_path}', 'warning')
+                except Exception as e:
+                    flash(f'Erreur upload image: {str(e)}', 'warning')
 
-        # Handle file upload
-        if form.file.data:
-            success, file_path = save_uploaded_file(form.file.data, folder='products/files', file_type='document')
-            if success:
-                product.file_path = file_path
+            db.session.commit()
+            flash('Produit mis à jour!', 'success')
+            return redirect(url_for('admin_products.index'))
 
-        db.session.commit()
-        flash('Produit mis à jour!', 'success')
-        return redirect(url_for('admin_products.index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de la mise à jour: {str(e)}', 'danger')
 
     return render_template('admin/product_form.html', form=form, product=product, title='Modifier le produit')
 

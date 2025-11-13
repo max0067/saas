@@ -12,7 +12,30 @@ def index():
     """Homepage."""
     featured_posts = BlogPost.query.filter_by(is_published=True, is_featured=True).limit(3).all()
     featured_products = Product.query.filter_by(is_published=True, is_featured=True).limit(3).all()
-    home_content = HomeContent.get_content()
+
+    try:
+        home_content = HomeContent.get_content()
+    except Exception as e:
+        # Fallback to default content if database error
+        print(f"Error loading HomeContent, using defaults: {e}")
+        # Create a temporary object with defaults (not saved to DB)
+        home_content = type('obj', (object,), {
+            'hero_title': 'Transforme ton corps.<br>Dépasse tes limites.',
+            'hero_subtitle': 'Des programmes de sport et nutrition conçus pour des résultats concrets. Rejoins le mouvement.',
+            'hero_image': 'assets/hero-image.svg',
+            'hero_button_text': 'Commencer maintenant',
+            'hero_button_link': '/shop/programs',
+            'hero_secondary_button_text': 'Outils gratuits',
+            'hero_secondary_button_link': '/calculators',
+            'products_section_title': 'Programmes populaires',
+            'products_section_subtitle': 'Choisis le programme adapté à ton objectif',
+            'blog_section_title': 'Le blog FitGang',
+            'blog_section_subtitle': 'Conseils, astuces et motivation pour progresser',
+            'cta_title': 'Prêt à transformer<br>ton physique ?',
+            'cta_subtitle': 'Rejoins des milliers de personnes qui progressent chaque jour avec FitGang.',
+            'cta_button_text': 'Commence gratuitement',
+            'cta_button_link': '/auth/register'
+        })()
 
     return render_template(
         'index.html',

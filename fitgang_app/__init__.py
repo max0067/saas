@@ -65,7 +65,7 @@ def create_app(config_name=None):
     # Admin blueprints
     from fitgang_app.blueprints.admin import (
         admin_bp, admin_users_bp, admin_products_bp,
-        admin_blog_bp, admin_analytics_bp, admin_affiliates_bp
+        admin_blog_bp, admin_analytics_bp, admin_affiliates_bp, admin_photos_bp, admin_gifts_bp
     )
     from fitgang_app.blueprints.admin.programs import admin_programs_bp
     from fitgang_app.blueprints.admin.ebooks import admin_ebooks_bp
@@ -96,6 +96,8 @@ def create_app(config_name=None):
     app.register_blueprint(admin_blog_bp, url_prefix='/admin/blog')
     app.register_blueprint(admin_analytics_bp, url_prefix='/admin/analytics')
     app.register_blueprint(admin_affiliates_bp, url_prefix='/admin/affiliates')
+    app.register_blueprint(admin_photos_bp, url_prefix='/admin/photos')
+    app.register_blueprint(admin_gifts_bp, url_prefix='/admin/gifts')
 
     # Register error handlers
     @app.errorhandler(404)

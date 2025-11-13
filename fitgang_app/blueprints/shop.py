@@ -1,6 +1,6 @@
 """Shop blueprint."""
 from flask import Blueprint, render_template, request
-from fitgang_app.models import Product
+from fitgang_app.models import Product, ProductType
 
 shop_bp = Blueprint('shop', __name__)
 
@@ -17,7 +17,14 @@ def programs():
     page = request.args.get('page', 1, type=int)
     difficulty = request.args.get('difficulty', None)
 
-    query = Product.query.filter_by(is_published=True, product_type='program')
+    # Filter for all program types (sport, diet, combined)
+    query = Product.query.filter_by(is_published=True).filter(
+        Product.product_type.in_([
+            ProductType.PROGRAMME_SPORT,
+            ProductType.PROGRAMME_DIETE,
+            ProductType.PROGRAMME_COMBINE
+        ])
+    )
 
     if difficulty:
         query = query.filter_by(difficulty_level=difficulty)
@@ -34,7 +41,10 @@ def ebooks():
     """Ebooks catalog."""
     page = request.args.get('page', 1, type=int)
 
-    query = Product.query.filter_by(is_published=True, product_type='ebook')
+    # Filter for ebooks
+    query = Product.query.filter_by(is_published=True).filter(
+        Product.product_type == ProductType.EBOOK
+    )
 
     products = query.order_by(Product.created_at.desc()).paginate(
         page=page, per_page=12, error_out=False

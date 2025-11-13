@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Photos Utilisateurs - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-images me-2"></i>Photos d'Évolution</h1>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">Utilisateur</label>
+                    <select name="user_id" class="form-select">
+                        <option value="">Tous les utilisateurs</option>
+                        {% for user in users %}
+                        <option value="{{ user.id }}" {% if current_user_id == user.id %}selected{% endif %}>
+                            {{ user.username }} ({{ user.email }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Type de photo</label>
+                    <select name="photo_type" class="form-select">
+                        <option value="">Tous les types</option>
+                        <option value="before" {% if current_photo_type == 'before' %}selected{% endif %}>Avant</option>
+                        <option value="after" {% if current_photo_type == 'after' %}selected{% endif %}>Après</option>
+                        <option value="progress" {% if current_photo_type == 'progress' %}selected{% endif %}>Progression</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel me-2"></i>Filtrer
+                    </button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{{ url_for('admin_photos.index') }}" class="btn btn-outline-secondary w-100">
+                        Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Galerie de photos -->
+    {% if photos.items %}
+    <div class="row g-4">
+        {% for photo in photos.items %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card h-100 shadow-sm">
+                <div class="position-relative">
+                    <img src="/uploads/{{ photo.file_path.split('/')[-1] }}" class="card-img-top" alt="{{ photo.photo_type }}" style="height: 250px; object-fit: cover;">
+                    <span class="position-absolute top-0 start-0 m-2">
+                        {% if photo.photo_type == 'before' %}
+                        <span class="badge bg-info">Avant</span>
+                        {% elif photo.photo_type == 'after' %}
+                        <span class="badge bg-success">Après</span>
+                        {% else %}
+                        <span class="badge bg-warning">Progression</span>
+                        {% endif %}
+                    </span>
+                    {% if photo.is_public %}
+                    <span class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-primary"><i class="bi bi-eye"></i> Public</span>
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-person me-1"></i>{{ photo.user.username }}
+                    </h6>
+                    {% if photo.weight_at_photo %}
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-speedometer2 me-1"></i>Poids: {{ photo.weight_at_photo }} kg
+                    </p>
+                    {% endif %}
+                    {% if photo.description %}
+                    <p class="card-text small">{{ photo.description }}</p>
+                    {% endif %}
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="bi bi-calendar me-1"></i>{{ photo.uploaded_at.strftime('%d/%m/%Y') }}
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="btn-group w-100" role="group">
+                        <form method="POST" action="{{ url_for('admin_photos.toggle_public', photo_id=photo.id) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-primary" title="{{ 'Rendre privée' if photo.is_public else 'Rendre publique' }}">
+                                <i class="bi bi-{{ 'eye-slash' if photo.is_public else 'eye' }}"></i>
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin_photos.delete', photo_id=photo.id) }}" class="d-inline" onsubmit="return confirm('Supprimer cette photo ?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if photos.pages > 1 %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if photos.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_photos.index', page=photos.prev_num, user_id=current_user_id, photo_type=current_photo_type) }}">Précédent</a>
+            </li>
+            {% endif %}
+
+            {% for page_num in photos.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page_num %}
+                <li class="page-item {{ 'active' if page_num == photos.page }}">
+                    <a class="page-link" href="{{ url_for('admin_photos.index', page=page_num, user_id=current_user_id, photo_type=current_photo_type) }}">{{ page_num }}</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if photos.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_photos.index', page=photos.next_num, user_id=current_user_id, photo_type=current_photo_type) }}">Suivant</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        <i class="bi bi-images fs-1 mb-3 d-block"></i>
+        <h5>Aucune photo trouvée</h5>
+        <p class="mb-0">Les utilisateurs n'ont pas encore uploadé de photos d'évolution.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

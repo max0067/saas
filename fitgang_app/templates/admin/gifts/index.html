@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Offrir des Produits - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-gift me-2"></i>Offrir des Produits</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-5">
+            <!-- Formulaire pour offrir -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Offrir un produit</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_gifts.give') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                        <div class="mb-3">
+                            <label class="form-label">Utilisateur <span class="text-danger">*</span></label>
+                            <select name="user_id" class="form-select" required>
+                                <option value="">Sélectionner un utilisateur...</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">
+                                    {{ user.username }} ({{ user.email }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Seuls les utilisateurs actifs sont listés</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Produit à offrir <span class="text-danger">*</span></label>
+                            <select name="product_id" class="form-select" required>
+                                <option value="">Sélectionner un produit...</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">
+                                    {{ product.title }} ({{ product.product_type.value }}) - {{ "%.2f"|format(product.price) }}€
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Seuls les produits publiés sont listés</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Note (optionnel)</label>
+                            <textarea name="gift_note" class="form-control" rows="2" placeholder="Ex: Récompense pour participation au challenge"></textarea>
+                            <small class="text-muted">Raison du cadeau (pour référence interne)</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-gift me-2"></i>Offrir ce produit
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Comment ça marche ?</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Sélectionnez un utilisateur et un produit</li>
+                    <li>Le produit sera ajouté gratuitement au compte de l'utilisateur</li>
+                    <li>L'utilisateur aura accès immédiatement au contenu</li>
+                    <li>Une commande "Cadeau Admin" sera créée dans l'historique</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <!-- Historique des cadeaux -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Cadeaux récents</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_gifts %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Utilisateur</th>
+                                    <th>Produit(s)</th>
+                                    <th>Note</th>
+                                    <th width="100"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gift in recent_gifts %}
+                                <tr>
+                                    <td>
+                                        <small>{{ gift.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                    </td>
+                                    <td>
+                                        {% if gift.user %}
+                                        <strong>{{ gift.user.username }}</strong><br>
+                                        <small class="text-muted">{{ gift.user.email }}</small>
+                                        {% else %}
+                                        <span class="text-muted">Utilisateur supprimé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% for item in gift.items %}
+                                        <span class="badge bg-info">{{ item.product_name }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ gift.notes.replace('Cadeau Admin: ', '') }}
+                                        </small>
+                                    </td>
+                                    <td class="text-end">
+                                        <form method="POST" action="{{ url_for('admin_gifts.revoke', order_id=gift.id) }}" onsubmit="return confirm('Révoquer ce cadeau ? L\'utilisateur perdra l\'accès au produit.');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Révoquer">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-gift fs-1 mb-3 d-block"></i>
+                        <p>Aucun cadeau offert pour le moment</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

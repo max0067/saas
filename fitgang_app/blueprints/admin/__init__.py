@@ -39,6 +39,8 @@ from fitgang_app.blueprints.admin.products import admin_products_bp
 from fitgang_app.blueprints.admin.blog import admin_blog_bp
 from fitgang_app.blueprints.admin.analytics import admin_analytics_bp
 from fitgang_app.blueprints.admin.affiliates import admin_affiliates_bp
+from fitgang_app.blueprints.admin.photos import admin_photos_bp
+from fitgang_app.blueprints.admin.gifts import admin_gifts_bp
 
 __all__ = [
     'admin_bp',
@@ -47,4 +49,6 @@ __all__ = [
     'admin_blog_bp',
     'admin_analytics_bp',
     'admin_affiliates_bp',
+    'admin_photos_bp',
+    'admin_gifts_bp',
 ]

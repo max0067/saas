@@ -1,0 +1,183 @@
+╔══════════════════════════════════════════════════════════════╗
+║              PROBLÈMES ACTUELS ET LEURS SOLUTIONS            ║
+╚══════════════════════════════════════════════════════════════╝
+
+Mis à jour: 2025-11-14
+
+┌──────────────────────────────────────────────────────────────┐
+│ ❌ PROBLÈME 1: Table weight_entries manquante                │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+Dashboard → "Erreur: La table weight_entries n'existe pas"
+
+CAUSE:
+La table n'a pas été créée dans MySQL/MariaDB
+
+SOLUTION:
+Voir fichier: CREATE_WEIGHT_TABLE.sql
+Ou: A_FAIRE_MANUELLEMENT.txt
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ ❌ PROBLÈME 2: Images blog ne s'affichent pas                │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+https://fitgang.fr/blog → Les images featured ne s'affichent pas
+
+CAUSES POSSIBLES:
+1. Les chemins en base de données sont vides ou incorrects
+2. Les fichiers images n'existent pas dans /uploads/blog/
+3. Les permissions du dossier uploads sont incorrectes
+
+DIAGNOSTIC:
+# Sur le serveur SSH:
+cd ~/fitgang_app/saas
+ls -la uploads/blog/
+
+# Dans phpMyAdmin:
+SELECT id, title, featured_image FROM blog_posts;
+
+SOLUTIONS:
+A. Si featured_image est NULL ou vide:
+   - Réditez l'article dans /admin/blog
+   - Uploadez une nouvelle image
+   - Sauvegardez
+
+B. Si le dossier uploads/blog/ n'existe pas:
+   mkdir -p uploads/blog
+   chmod 755 uploads/blog
+
+C. Si les images existent mais ne s'affichent pas:
+   - Vérifiez les permissions: chmod 644 uploads/blog/*.jpg
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ ❌ PROBLÈME 3: /profile/photos erreur 500                    │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+Erreur 500 en accédant à https://fitgang.fr/profile/photos
+
+CAUSE PROBABLE:
+La table user_photos n'existe pas dans la base de données
+
+SOLUTION:
+Dans phpMyAdmin, exécutez:
+
+CREATE TABLE IF NOT EXISTS user_photos (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_id INTEGER NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    photo_type VARCHAR(20) NOT NULL,
+    weight_at_photo DECIMAL(5,2),
+    description TEXT,
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    INDEX idx_user_photos_user_id (user_id),
+    INDEX idx_user_photos_uploaded_at (uploaded_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ ❌ PROBLÈME 4: Aucun entraînement disponible                │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+https://fitgang.fr/workouts → "Aucun entraînement disponible"
+Alors que vous avez acheté un programme
+
+CAUSES POSSIBLES:
+1. La commande n'est pas en statut "completed"
+2. Le produit n'a pas de workouts liés dans la base de données
+3. La table workouts n'existe pas ou est vide
+
+DIAGNOSTIC:
+# Dans phpMyAdmin:
+
+1. Vérifier statut de votre commande:
+SELECT id, status, created_at
+FROM orders
+WHERE user_id = VOTRE_USER_ID
+ORDER BY created_at DESC;
+
+2. Vérifier les produits de la commande:
+SELECT oi.*, p.title
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+WHERE oi.order_id = VOTRE_ORDER_ID;
+
+3. Vérifier si des workouts existent:
+SELECT id, name, product_id
+FROM workouts
+LIMIT 10;
+
+SOLUTIONS:
+A. Si la commande n'est pas "completed":
+   - Allez dans /admin (compte admin)
+   - Orders → Changez le statut en "completed"
+
+B. Si aucun workout n'existe:
+   - Les workouts doivent être créés manuellement
+   - Allez dans /admin/programs
+   - Éditez le programme
+   - Ajoutez des workouts
+
+C. Si la table workouts n'existe pas:
+   Contactez-moi pour le script SQL de création
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📋 RÉSUMÉ DES TABLES À CRÉER                                │
+└──────────────────────────────────────────────────────────────┘
+
+OBLIGATOIRES pour les fonctionnalités actuelles:
+✓ users (existe déjà)
+✓ products (existe déjà)
+✓ orders (existe déjà)
+✓ order_items (existe déjà)
+✓ blog_posts (existe déjà)
+
+À CRÉER:
+❌ weight_entries → Pour le suivi de poids
+❌ user_photos → Pour les photos avant/après
+❌ workouts → Pour les entraînements (si manquante)
+❌ exercises → Pour la bibliothèque d'exercices (si manquante)
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🚀 ORDRE DE PRIORITÉ DES CORRECTIFS                        │
+└──────────────────────────────────────────────────────────────┘
+
+1️⃣  CRITIQUE - Créer weight_entries
+    → Fichier: CREATE_WEIGHT_TABLE.sql
+
+2️⃣  IMPORTANT - Créer user_photos
+    → Voir SQL ci-dessus
+
+3️⃣  MOYEN - Vérifier images blog
+    → Diagnostic manuel nécessaire
+
+4️⃣  MOYEN - Vérifier workouts
+    → Diagnostic manuel nécessaire
+    → Peut nécessiter création de contenu
+
+┌──────────────────────────────────────────────────────────────┐
+│ 💡 COMMENT ÉVITER CES PROBLÈMES À L'AVENIR                 │
+└──────────────────────────────────────────────────────────────┘
+
+1. Utilisez les migrations Flask-Migrate:
+   flask db migrate -m "Description"
+   flask db upgrade
+
+2. Vérifiez les logs d'erreur:
+   tail -f error_log
+
+3. Testez en local d'abord:
+   python app.py
+
+4. Backup régulier de la base de données:
+   mysqldump -u USER -p DATABASE > backup.sql

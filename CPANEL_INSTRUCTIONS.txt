@@ -1,0 +1,105 @@
+╔══════════════════════════════════════════════════════════════╗
+║  INSTRUCTIONS URGENTES - FORCER PASSENGER À RECHARGER        ║
+╚══════════════════════════════════════════════════════════════╝
+
+PROBLÈME: Passenger cache les anciens fichiers Python (.pyc)
+SOLUTION: Arrêt COMPLET + nettoyage + redémarrage
+
+┌──────────────────────────────────────────────────────────────┐
+│ ÉTAPE 1: SUR LE SERVEUR (SSH wrbh3411@down)                 │
+└──────────────────────────────────────────────────────────────┘
+
+cd ~/fitgang_app/saas
+# OU: cd ~/saas
+
+# Exécutez le script de nettoyage:
+bash TROUBLESHOOT_PASSENGER.sh
+
+# OU manuellement:
+find . -type f -name "*.pyc" -delete
+find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
+rm -rf tmp
+mkdir -p tmp/pids
+echo "Restart $(date)" > tmp/restart.txt
+
+┌──────────────────────────────────────────────────────────────┐
+│ ÉTAPE 2: DANS CPANEL (TRÈS IMPORTANT!)                      │
+└──────────────────────────────────────────────────────────────┘
+
+1. Connectez-vous à cPanel
+   https://votre-domaine.com:2083
+
+2. Cherchez "Setup Python App" ou "Application Python"
+
+3. Trouvez votre application FitGang
+
+4. ⚠️  IMPORTANT: Cliquez sur "STOP APPLICATION"
+   (PAS "Restart" - il faut STOP puis START)
+
+5. ⏱️  Attendez 30-60 secondes
+
+6. Cliquez sur "START APPLICATION"
+
+7. ⏱️  Attendez encore 30-60 secondes
+
+┌──────────────────────────────────────────────────────────────┐
+│ ÉTAPE 3: VÉRIFICATION                                        │
+└──────────────────────────────────────────────────────────────┘
+
+1. Ouvrez une fenêtre de navigation privée
+
+2. Allez sur: https://fitgang.fr/profile
+
+3. Appuyez sur Ctrl+F5 (ou Cmd+Shift+R sur Mac)
+
+4. Faites clic droit → "Afficher le code source"
+
+5. Cherchez (Ctrl+F): "--apple-blue"
+
+   ✅ SI VOUS TROUVEZ "--apple-blue" → C'EST BON!
+   ❌ SI VOUS NE TROUVEZ PAS → Recommencez ÉTAPE 2
+
+┌──────────────────────────────────────────────────────────────┐
+│ ÉTAPE 4: TESTER LE BLOG                                     │
+└──────────────────────────────────────────────────────────────┘
+
+Une fois que le nouveau design apparaît:
+
+1. https://fitgang.fr/admin/blog/1/edit
+
+2. Cliquez sur "Publié" dans le statut
+
+3. Cliquez sur "Enregistrer"
+
+   ✅ Devrait fonctionner sans erreur 500!
+
+┌──────────────────────────────────────────────────────────────┐
+│ SI ÇA NE MARCHE TOUJOURS PAS:                               │
+└──────────────────────────────────────────────────────────────┘
+
+Vérifiez dans cPanel → Setup Python App:
+
+1. Le "Application Root" devrait être:
+   /home/wrbh3411/fitgang_app/saas
+   OU
+   /home/wrbh3411/saas
+
+2. Le "Application URL" devrait être:
+   https://fitgang.fr
+
+3. La version Python devrait être: 3.9+ ou 3.10+
+
+4. Si le chemin est différent, AJUSTEZ-LE puis STOP/START
+
+═══════════════════════════════════════════════════════════════
+
+CORRECTIONS DÉJÀ FAITES DANS LE CODE (attendant déploiement):
+
+✅ Blog publishing error 500 → CORRIGÉ
+✅ Profile design Apple → FAIT
+✅ Product page Apple design → FAIT
+✅ Dashboard weight tracking → FAIT
+✅ Workouts error 500 → CORRIGÉ
+✅ Calculators error 500 → CORRIGÉ
+
+TOUT est prêt, il faut juste que Passenger charge les nouveaux fichiers!

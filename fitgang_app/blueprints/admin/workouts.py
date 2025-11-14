@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from fitgang_app import db
 from fitgang_app.models.workout import Workout, Exercise, WorkoutExercise
-from fitgang_app.models.product import Product
+from fitgang_app.models.product import Product, ProductType
 from fitgang_app.utils.decorators import admin_required
 
 admin_workouts_bp = Blueprint('admin_workouts', __name__)
@@ -13,8 +13,14 @@ admin_workouts_bp = Blueprint('admin_workouts', __name__)
 @admin_required
 def index():
     """List all workouts."""
-    # Group workouts by product
-    products = Product.query.filter(Product.product_type.in_(['program', 'programme_sport'])).all()
+    # Group workouts by product - tous les programmes sportifs
+    products = Product.query.filter(
+        Product.product_type.in_([
+            ProductType.PROGRAMME_SPORT,
+            ProductType.PROGRAMME_DIETE,
+            ProductType.PROGRAMME_COMBINE
+        ])
+    ).all()
 
     workouts_by_product = {}
     for product in products:

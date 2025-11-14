@@ -13,13 +13,38 @@ def list():
     """List available workouts."""
     # Get workouts from purchased programs
     workouts = []
+    debug_info = {
+        'total_orders': len(current_user.orders),
+        'completed_orders': 0,
+        'orders_detail': []
+    }
+
     for order in current_user.orders:
+        order_info = {
+            'id': order.id,
+            'status': order.status.value if hasattr(order.status, 'value') else str(order.status),
+            'is_completed': order.status == OrderStatus.COMPLETED,
+            'items_count': len(order.items),
+            'items': []
+        }
+
         if order.status == OrderStatus.COMPLETED:
+            debug_info['completed_orders'] += 1
             for item in order.items:
+                item_info = {
+                    'product_id': item.product_id,
+                    'product_name': item.product.title if item.product else 'N/A',
+                    'has_workouts': bool(item.product.workouts) if item.product else False,
+                    'workouts_count': len(item.product.workouts) if item.product and item.product.workouts else 0
+                }
+                order_info['items'].append(item_info)
+
                 if item.product.workouts:
                     workouts.extend(item.product.workouts)
 
-    return render_template('workouts/index.html', workouts=workouts)
+        debug_info['orders_detail'].append(order_info)
+
+    return render_template('workouts/index.html', workouts=workouts, debug_info=debug_info)
 
 
 @workouts_bp.route('/<int:workout_id>')

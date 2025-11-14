@@ -1,0 +1,177 @@
+=====================================================
+🔧 GUIDE DE RÉPARATION COMPLET - FITGANG
+=====================================================
+
+Tu as 3 problèmes à résoudre:
+1. ❌ Erreur #1005 pour weight_entries
+2. ❌ Table blog_posts introuvable
+3. ❌ Workouts vides
+
+SOLUTION → Exécuter le fichier CREATE_ALL_MISSING_TABLES.sql
+
+
+=====================================================
+📋 ÉTAPE 1: CRÉER TOUTES LES TABLES MANQUANTES
+=====================================================
+
+1. Va sur cPanel → phpMyAdmin
+2. Sélectionne la base de données: wrbh3411_fitgang
+3. Clique sur l'onglet "SQL" en haut
+4. Ouvre le fichier CREATE_ALL_MISSING_TABLES.sql sur ton ordinateur
+5. Copie TOUT le contenu du fichier
+6. Colle dans phpMyAdmin
+7. Clique sur "Exécuter"
+
+✅ Cela va créer:
+   - weight_entries (suivi de poids)
+   - blog_categories (catégories de blog)
+   - blog_tags (tags de blog)
+   - blog_posts (articles de blog)
+   - post_tags (association posts-tags)
+   - workouts (entraînements)
+   - exercises (exercices)
+   - workout_exercises (exercices dans workouts)
+
+✅ Cela va aussi ajouter des données de test:
+   - 3 catégories: Nutrition, Entraînement, Motivation
+   - 4 tags: Perte de poids, Prise de masse, Cardio, Musculation
+
+
+=====================================================
+📋 ÉTAPE 2: DIAGNOSTIQUER POURQUOI WORKOUTS EST VIDE
+=====================================================
+
+Maintenant il faut comprendre pourquoi tu vois "Aucun entraînement disponible"
+
+1. Reste dans phpMyAdmin → onglet SQL
+2. Ouvre le fichier DIAGNOSTIC_WORKOUTS.sql
+3. Copie LA PREMIÈRE REQUÊTE SEULEMENT:
+
+   SELECT 'Total workouts dans la base:' AS info, COUNT(*) AS nombre FROM workouts;
+
+4. Exécute-la
+5. Si le résultat est 0 → Tu n'as AUCUN workout dans la base
+
+Ensuite, copie et exécute les requêtes suivantes UNE PAR UNE:
+
+REQUÊTE 2: Voir tous les workouts
+REQUÊTE 3: Voir tous les produits/programmes
+REQUÊTE 4: Trouver ton ID utilisateur
+   ⚠️ IMPORTANT: Remplace 'TON_EMAIL' par ton vrai email!
+
+REQUÊTE 5: Voir tes commandes
+   ⚠️ Remplace USER_ID par ton id de la requête 4
+
+REQUÊTE 6: Voir les items de tes commandes
+   ⚠️ Remplace USER_ID par ton id
+
+REQUÊTE 7: Voir si ton produit a des workouts
+   ⚠️ Remplace PRODUCT_ID par l'id du produit de la requête 6
+
+
+=====================================================
+📋 ÉTAPE 3: CRÉER UN WORKOUT DE TEST
+=====================================================
+
+Si après le diagnostic tu vois que la table workouts est VIDE,
+tu dois créer du contenu.
+
+OPTION A - Workout de test rapide:
+1. Va à la fin du fichier DIAGNOSTIC_WORKOUTS.sql
+2. Cherche la section "SOLUTION TEMPORAIRE"
+3. Copie le INSERT INTO workouts...
+4. Remplace PRODUCT_ID par l'id de ton produit (trouvé à l'étape 2)
+5. Exécute dans phpMyAdmin
+
+OPTION B - Créer des vrais workouts via l'admin:
+1. Va sur https://fitgang.fr/admin/products
+2. Clique sur ton produit (programme)
+3. Cherche une section "Workouts" ou "Entraînements"
+4. Ajoute des workouts avec le formulaire
+
+
+=====================================================
+📋 ÉTAPE 4: VÉRIFIER LES IMAGES BLOG
+=====================================================
+
+Pour voir pourquoi les images ne s'affichent pas:
+
+1. phpMyAdmin → table blog_posts
+2. Clique sur "Parcourir" (Browse)
+3. Regarde la colonne "featured_image"
+
+Cas 1: La colonne est VIDE (NULL)
+   → Solution: Réédite les articles dans /admin/blog et uploade les images
+
+Cas 2: La colonne contient une URL HTTP complète (ex: https://...)
+   → Solution: Les images devraient s'afficher. Vérifie que l'URL est valide
+
+Cas 3: La colonne contient un chemin local (ex: blog/image.jpg)
+   → Solution: Vérifie que le fichier existe dans:
+      /home/wrbh3411/public_html/saas/uploads/blog/image.jpg
+
+
+=====================================================
+📋 ÉTAPE 5: REDÉMARRER PASSENGER (CRUCIAL!)
+=====================================================
+
+Après avoir créé les tables, TU DOIS redémarrer Passenger:
+
+1. cPanel → Setup Python App
+2. Clique sur STOP APPLICATION
+3. Attends 1 minute (vraiment, attends!)
+4. Clique sur START APPLICATION
+5. NE PAS juste cliquer "Restart" - ça ne suffit pas!
+
+
+=====================================================
+✅ RÉSUMÉ DES FICHIERS CRÉÉS
+=====================================================
+
+CREATE_ALL_MISSING_TABLES.sql
+   → Exécute dans phpMyAdmin pour créer toutes les tables
+
+DIAGNOSTIC_WORKOUTS.sql
+   → Utilise pour comprendre pourquoi workouts est vide
+
+GUIDE_REPARATION_COMPLET.txt (ce fichier)
+   → Instructions complètes
+
+
+=====================================================
+🆘 SI ÇA NE MARCHE TOUJOURS PAS
+=====================================================
+
+Vérifie ces points:
+
+1. Est-ce que Passenger est bien redémarré? (STOP puis START)
+2. Est-ce que toutes les tables ont été créées? (vérifie dans phpMyAdmin)
+3. Est-ce que tu vois des erreurs dans cPanel → Error logs?
+4. Est-ce que la table blog_posts apparaît maintenant dans phpMyAdmin?
+5. Est-ce que tu as bien créé des workouts pour ton produit?
+
+Si après tout ça, il y a encore des erreurs:
+→ Envoie-moi les messages d'erreur EXACTS que tu vois
+→ Envoie-moi le résultat des requêtes de diagnostic
+
+
+=====================================================
+📞 PROCHAINES ÉTAPES
+=====================================================
+
+Après avoir tout fait:
+
+1. Teste https://fitgang.fr/dashboard
+   → Le suivi de poids devrait marcher
+
+2. Teste https://fitgang.fr/blog
+   → Les images devraient s'afficher
+
+3. Teste https://fitgang.fr/workouts
+   → Tu devrais voir tes entraînements
+
+4. Teste https://fitgang.fr/profile/photos
+   → Pas d'erreur 500
+
+
+Bon courage! 💪

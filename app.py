@@ -1,4 +1,5 @@
 """FitGang Application Entry Point."""
+# Force reload - Updated: 2025-11-14 06:22
 import os
 from fitgang_app import create_app, db
 from fitgang_app.models import (
@@ -9,6 +10,7 @@ from fitgang_app.models import (
 )
 
 app = create_app(os.environ.get('FLASK_ENV', 'development'))
+application = app  # For WSGI servers
 
 
 @app.shell_context_processor

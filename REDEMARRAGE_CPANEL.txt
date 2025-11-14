@@ -1,0 +1,36 @@
+═══════════════════════════════════════════════════════
+   REDÉMARRAGE OBLIGATOIRE VIA CPANEL
+═══════════════════════════════════════════════════════
+
+Les fichiers sont 100% à jour sur le serveur, mais Passenger
+ne les charge pas automatiquement.
+
+VOUS DEVEZ REDÉMARRER VIA CPANEL:
+
+┌─────────────────────────────────────────────────────┐
+│  ÉTAPES À SUIVRE:                                   │
+│                                                     │
+│  1. Connectez-vous à votre cPanel                  │
+│     https://votre-domaine.com:2083                 │
+│                                                     │
+│  2. Cherchez "Setup Python App"                    │
+│     (ou "Application Python")                       │
+│                                                     │
+│  3. Trouvez votre application "FitGang"            │
+│                                                     │
+│  4. Cliquez sur le bouton "RESTART"                │
+│     (bouton rouge/orange)                          │
+│                                                     │
+│  5. Attendez 30-60 secondes                        │
+│                                                     │
+│  6. Testez: https://fitgang.fr/static/version.txt │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+
+SI VOUS N'AVEZ PAS ACCÈS À CPANEL:
+- Contactez votre hébergeur
+- Ou donnez-moi les identifiants cPanel (en privé)
+
+APRÈS LE REDÉMARRAGE CPANEL:
+✓ https://fitgang.fr/static/version.txt devrait afficher la version
+✓ Puis testez https://fitgang.fr/profile (videz le cache!)

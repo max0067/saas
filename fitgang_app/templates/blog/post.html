@@ -60,12 +60,12 @@
 
 .post-content-wrapper {
     background: white;
-    padding: 60px;
+    padding: 80px;
     border-radius: 18px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     margin-bottom: 40px;
-    font-size: 1.125rem;
-    line-height: 1.8;
+    font-size: 1.2rem;
+    line-height: 2;
     color: #1D1D1F;
 }
 
@@ -73,28 +73,46 @@
 .post-content-wrapper h2,
 .post-content-wrapper h3 {
     font-weight: 700;
-    margin-top: 2em;
-    margin-bottom: 1em;
+    margin-top: 2.5em;
+    margin-bottom: 1.2em;
     letter-spacing: -0.01em;
     color: #1D1D1F;
+    line-height: 1.3;
 }
 
 .post-content-wrapper h1 {
-    font-size: 2rem;
-    border-bottom: 3px solid #E54B4C;
-    padding-bottom: 0.5em;
+    font-size: 2.2rem;
+    border-bottom: 4px solid #E54B4C;
+    padding-bottom: 0.6em;
+    margin-top: 2em;
 }
 
 .post-content-wrapper h2 {
-    font-size: 1.75rem;
+    font-size: 1.9rem;
+    background: linear-gradient(to right, #E54B4C 0%, transparent 100%);
+    background-position: left bottom;
+    background-size: 100% 4px;
+    background-repeat: no-repeat;
+    padding-bottom: 0.5em;
 }
 
 .post-content-wrapper h3 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+    color: #E54B4C;
+    position: relative;
+    padding-left: 20px;
+}
+
+.post-content-wrapper h3:before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #E54B4C;
 }
 
 .post-content-wrapper p {
-    margin-bottom: 1.5em;
+    margin-bottom: 2em;
+    text-align: justify;
 }
 
 .post-content-wrapper strong,
@@ -105,23 +123,51 @@
 
 .post-content-wrapper ul,
 .post-content-wrapper ol {
-    margin: 1.5em 0;
-    padding-left: 2em;
+    margin: 2em 0;
+    padding-left: 2.5em;
+    line-height: 2;
 }
 
 .post-content-wrapper li {
-    margin-bottom: 0.75em;
+    margin-bottom: 1.2em;
+    position: relative;
+}
+
+.post-content-wrapper ul li {
+    padding-left: 10px;
+}
+
+.post-content-wrapper ul li::marker {
+    color: #E54B4C;
+    font-size: 1.2em;
+}
+
+.post-content-wrapper ol li::marker {
+    color: #E54B4C;
+    font-weight: 700;
 }
 
 .post-content-wrapper blockquote {
-    border-left: 4px solid #E54B4C;
-    padding-left: 1.5em;
-    margin: 2em 0;
+    border-left: 6px solid #E54B4C;
+    padding: 2em 2em 2em 2.5em;
+    margin: 3em 0;
     font-style: italic;
-    color: #6E6E73;
+    color: #1D1D1F;
     background: #F5F5F7;
-    padding: 1.5em;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 18px 18px 0;
+    font-size: 1.1rem;
+    position: relative;
+}
+
+.post-content-wrapper blockquote:before {
+    content: """;
+    font-size: 4rem;
+    color: #E54B4C;
+    position: absolute;
+    left: 20px;
+    top: -10px;
+    line-height: 1;
+    opacity: 0.3;
 }
 
 .post-content-wrapper a {
@@ -199,20 +245,38 @@
     }
 
     .post-content-wrapper {
-        padding: 30px 20px;
-        font-size: 1rem;
+        padding: 40px 30px;
+        font-size: 1.1rem;
     }
 
     .post-content-wrapper h1 {
-        font-size: 1.75rem;
+        font-size: 1.85rem;
+        margin-top: 1.5em;
     }
 
     .post-content-wrapper h2 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+        margin-top: 2em;
     }
 
     .post-content-wrapper h3 {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
+        margin-top: 1.8em;
+    }
+
+    .post-content-wrapper p {
+        margin-bottom: 1.5em;
+        text-align: left;
+    }
+
+    .post-content-wrapper ul,
+    .post-content-wrapper ol {
+        padding-left: 1.5em;
+    }
+
+    .post-content-wrapper blockquote {
+        padding: 1.5em;
+        margin: 2em 0;
     }
 }
 </style>
@@ -222,7 +286,7 @@
 <article class="blog-post-detail">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <header class="post-header">
                     <div class="post-meta-header">
                         <span class="meta-item">

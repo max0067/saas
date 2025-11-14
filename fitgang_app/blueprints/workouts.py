@@ -11,62 +11,21 @@ workouts_bp = Blueprint('workouts', __name__)
 @login_required
 def list():
     """List available workouts."""
-    # Get workouts from purchased programs
     workouts = []
-    debug_info = {
-        'total_orders': len(current_user.orders) if current_user.orders else 0,
-        'completed_orders': 0,
-        'orders_detail': [],
-        'error': None
-    }
 
+    # Simple version without complex debug for now
     try:
-        for order in current_user.orders:
-            try:
-                order_info = {
-                    'id': order.id,
-                    'status': order.status.value if hasattr(order.status, 'value') else str(order.status),
-                    'is_completed': order.status == OrderStatus.COMPLETED,
-                    'items_count': len(order.items) if order.items else 0,
-                    'items': []
-                }
-
-                if order.status == OrderStatus.COMPLETED:
-                    debug_info['completed_orders'] += 1
+        if current_user.orders:
+            for order in current_user.orders:
+                if order.status == OrderStatus.COMPLETED and order.items:
                     for item in order.items:
-                        try:
-                            # Vérifier que le produit existe
-                            if not item.product:
-                                continue
-
-                            # Vérifier si workouts existe comme attribut
-                            has_workouts = False
-                            workouts_count = 0
-                            try:
-                                if hasattr(item.product, 'workouts') and item.product.workouts:
-                                    has_workouts = True
-                                    workouts_count = len(item.product.workouts)
-                                    workouts.extend(item.product.workouts)
-                            except:
-                                pass
-
-                            item_info = {
-                                'product_id': item.product_id,
-                                'product_name': item.product.title if item.product else 'N/A',
-                                'has_workouts': has_workouts,
-                                'workouts_count': workouts_count
-                            }
-                            order_info['items'].append(item_info)
-                        except Exception as item_error:
-                            debug_info['error'] = f"Erreur item: {str(item_error)}"
-
-                debug_info['orders_detail'].append(order_info)
-            except Exception as order_error:
-                debug_info['error'] = f"Erreur commande: {str(order_error)}"
+                        if item.product and hasattr(item.product, 'workouts'):
+                            if item.product.workouts:
+                                workouts.extend(item.product.workouts)
     except Exception as e:
-        debug_info['error'] = f"Erreur générale: {str(e)}"
+        flash(f'Erreur lors du chargement des entraînements: {str(e)}', 'danger')
 
-    return render_template('workouts/index.html', workouts=workouts, debug_info=debug_info)
+    return render_template('workouts/index.html', workouts=workouts)
 
 
 @workouts_bp.route('/<int:workout_id>')

@@ -1,0 +1,120 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Modifier' if workout else 'Créer' }} un Workout - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-dumbbell"></i>
+                        {{ 'Modifier' if workout else 'Créer' }} un Workout
+                        <br><small>Pour: {{ product.title }}</small>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Basic Info -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Semaine <span class="text-danger">*</span></label>
+                                <input type="number" name="week_number" class="form-control"
+                                       value="{{ workout.week_number if workout else 1 }}"
+                                       min="1" max="52" required>
+                                <small class="form-text text-muted">Numéro de semaine du programme (1-52)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Jour <span class="text-danger">*</span></label>
+                                <input type="number" name="day_number" class="form-control"
+                                       value="{{ workout.day_number if workout else 1 }}"
+                                       min="1" max="7" required>
+                                <small class="form-text text-muted">Jour de la semaine (1-7)</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nom du Workout <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control"
+                                   value="{{ workout.name if workout else '' }}"
+                                   placeholder="Ex: Séance Push - Pectoraux, Épaules, Triceps" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3"
+                                      placeholder="Description de la séance...">{{ workout.description if workout else '' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Durée (minutes)</label>
+                                <input type="number" name="duration_minutes" class="form-control"
+                                       value="{{ workout.duration_minutes if workout else 60 }}"
+                                       min="5" max="300">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Difficulté</label>
+                                <select name="difficulty" class="form-select">
+                                    <option value="">-- Choisir --</option>
+                                    <option value="beginner" {% if workout and workout.difficulty == 'beginner' %}selected{% endif %}>
+                                        Débutant
+                                    </option>
+                                    <option value="intermediate" {% if workout and workout.difficulty == 'intermediate' %}selected{% endif %}>
+                                        Intermédiaire
+                                    </option>
+                                    <option value="advanced" {% if workout and workout.difficulty == 'advanced' %}selected{% endif %}>
+                                        Avancé
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Warmup & Cooldown -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-fire text-danger"></i> Échauffement (Warmup)
+                            </label>
+                            <textarea name="warmup" class="form-control" rows="3"
+                                      placeholder="Ex: 5-10 minutes de cardio léger + étirements dynamiques">{{ workout.warmup if workout else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-snow text-info"></i> Retour au calme (Cooldown)
+                            </label>
+                            <textarea name="cooldown" class="form-control" rows="3"
+                                      placeholder="Ex: Étirements statiques 5-10 minutes">{{ workout.cooldown if workout else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-sticky"></i> Notes / Conseils
+                            </label>
+                            <textarea name="notes" class="form-control" rows="3"
+                                      placeholder="Conseils, notes importantes pour cette séance...">{{ workout.notes if workout else '' }}</textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>À venir:</strong> Tu pourras bientôt ajouter des exercices spécifiques à chaque workout.
+                            Pour l'instant, utilise la description et les notes pour détailler les exercices.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('admin_workouts.index') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i>
+                                {{ 'Mettre à jour' if workout else 'Créer le workout' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

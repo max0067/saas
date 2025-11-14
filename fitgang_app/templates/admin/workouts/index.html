@@ -1,0 +1,162 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Gestion des Workouts - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-dumbbell"></i> Gestion des Workouts</h1>
+    </div>
+
+    {% for product_id, data in workouts_by_product.items() %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-box"></i> {{ data.product.title }}
+                    <span class="badge bg-light text-dark ms-2">{{ data.workouts|length }} workouts</span>
+                </h4>
+                <div>
+                    <a href="{{ url_for('admin_workouts.create', product_id=product_id) }}"
+                       class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Nouveau Workout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {% if data.workouts %}
+            <!-- Quick Create Week Form -->
+            <div class="alert alert-info mb-3">
+                <form method="POST" action="{{ url_for('admin_workouts.quick_create_week', product_id=product_id) }}"
+                      class="row g-3 align-items-end">
+                    <div class="col-auto">
+                        <label class="form-label mb-0"><strong>Création rapide:</strong></label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label small">Semaine</label>
+                        <input type="number" name="week_number" class="form-control form-control-sm"
+                               value="1" min="1" max="52" style="width: 80px;">
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label small">Jours/semaine</label>
+                        <select name="days_per_week" class="form-select form-select-sm" style="width: 100px;">
+                            <option value="3">3 jours</option>
+                            <option value="4">4 jours</option>
+                            <option value="5" selected>5 jours</option>
+                            <option value="6">6 jours</option>
+                            <option value="7">7 jours</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="bi bi-lightning-fill"></i> Créer une semaine complète
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Semaine</th>
+                            <th>Jour</th>
+                            <th>Nom</th>
+                            <th>Durée</th>
+                            <th>Difficulté</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for workout in data.workouts %}
+                        <tr>
+                            <td><span class="badge bg-secondary">S{{ workout.week_number }}</span></td>
+                            <td><span class="badge bg-info">J{{ workout.day_number }}</span></td>
+                            <td>
+                                <strong>{{ workout.name }}</strong>
+                                {% if workout.description %}
+                                <br><small class="text-muted">{{ workout.description[:100] }}...</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if workout.duration_minutes %}
+                                <i class="bi bi-clock"></i> {{ workout.duration_minutes }} min
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if workout.difficulty == 'beginner' %}
+                                <span class="badge bg-success">Débutant</span>
+                                {% elif workout.difficulty == 'intermediate' %}
+                                <span class="badge bg-warning">Intermédiaire</span>
+                                {% elif workout.difficulty == 'advanced' %}
+                                <span class="badge bg-danger">Avancé</span>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('admin_workouts.edit', workout_id=workout.id) }}"
+                                       class="btn btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST"
+                                          action="{{ url_for('admin_workouts.delete', workout_id=workout.id) }}"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Supprimer ce workout ?');">
+                                        <button type="submit" class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                Aucun workout créé pour ce produit.
+                <br><br>
+                <strong>Création rapide:</strong>
+                <form method="POST" action="{{ url_for('admin_workouts.quick_create_week', product_id=product_id) }}"
+                      class="row g-3 align-items-end mt-2">
+                    <div class="col-auto">
+                        <label class="form-label small">Semaine</label>
+                        <input type="number" name="week_number" class="form-control form-control-sm"
+                               value="1" min="1" max="52" style="width: 80px;">
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label small">Jours/semaine</label>
+                        <select name="days_per_week" class="form-select form-select-sm" style="width: 120px;">
+                            <option value="3">3 jours</option>
+                            <option value="4">4 jours</option>
+                            <option value="5" selected>5 jours</option>
+                            <option value="6">6 jours</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="bi bi-lightning-fill"></i> Créer automatiquement
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not workouts_by_product %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucun produit de type "programme" trouvé.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

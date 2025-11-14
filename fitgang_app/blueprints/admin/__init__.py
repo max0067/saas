@@ -41,6 +41,7 @@ from fitgang_app.blueprints.admin.analytics import admin_analytics_bp
 from fitgang_app.blueprints.admin.affiliates import admin_affiliates_bp
 from fitgang_app.blueprints.admin.photos import admin_photos_bp
 from fitgang_app.blueprints.admin.gifts import admin_gifts_bp
+from fitgang_app.blueprints.admin.workouts import admin_workouts_bp
 # Temporarily disabled: from fitgang_app.blueprints.admin.home_editor import admin_home_editor_bp
 
 __all__ = [
@@ -52,5 +53,6 @@ __all__ = [
     'admin_affiliates_bp',
     'admin_photos_bp',
     'admin_gifts_bp',
+    'admin_workouts_bp',
     # 'admin_home_editor_bp',
 ]

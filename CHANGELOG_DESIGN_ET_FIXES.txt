@@ -1,0 +1,176 @@
+╔══════════════════════════════════════════════════════════════╗
+║         CHANGELOG - DESIGN ROUGE FITGANG + CORRECTIONS       ║
+╚══════════════════════════════════════════════════════════════╝
+
+Date: 2025-11-14
+Branche: claude/saccra-fitgang-complete-overhaul-0186TzukF7j2eifnrXaNd51n
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🎨 CHANGEMENT DE PALETTE DE COULEURS                         │
+└──────────────────────────────────────────────────────────────┘
+
+AVANT: Design Apple avec boutons bleus
+- Couleur principale: #007AFF (bleu Apple)
+- Couleur foncée: #0051D5
+
+APRÈS: Design FitGang avec boutons rouges
+- Couleur principale: #DC143C (rouge FitGang)
+- Couleur foncée: #B01030
+
+PAGES MODIFIÉES:
+✓ /admin/blog (formulaire création/édition articles)
+✓ /profile (page profil utilisateur)
+✓ /programmes/[produit] (pages détails produits)
+✓ /dashboard (tableau de bord)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🐛 CORRECTIONS DE BUGS                                       │
+└──────────────────────────────────────────────────────────────┘
+
+1. BUG BLOG - ERREUR PUBLICATION
+   Problème: "str object has no attribute filename" lors de la
+            publication/édition d'articles
+
+   Cause: form.featured_image.data contenait l'URL de l'image
+          existante (string) au lieu d'un nouveau fichier (FileStorage)
+
+   Solution: Ajout de vérification hasattr(data, 'filename')
+             avant d'appeler save_uploaded_file()
+
+   Fichier: fitgang_app/blueprints/admin/blog.py
+
+   ✅ Les articles peuvent maintenant être publiés sans erreur!
+
+2. BUG PHOTO PROFIL - ERREUR 500
+   Problème: Erreur 500 lors de l'ajout de photos sur /dashboard
+
+   Cause: Même problème que le blog - form.photo.data non vérifié
+
+   Solution: Vérification que form.photo.data est bien un FileStorage
+             Message d'erreur explicite si aucune photo sélectionnée
+
+   Fichier: fitgang_app/blueprints/profile.py
+
+   ✅ Upload de photos maintenant fonctionnel!
+
+┌──────────────────────────────────────────────────────────────┐
+│ ✨ NOUVEL ÉDITEUR DE BLOG                                    │
+└──────────────────────────────────────────────────────────────┘
+
+Éditeur Quill.js intégré (gratuit et open-source):
+
+FONCTIONNALITÉS EXTRAIT:
+- Gras, italique, souligné
+- Listes ordonnées et non ordonnées
+- Liens
+- Compteur de caractères (max 500)
+
+FONCTIONNALITÉS CONTENU:
+- Titres H1, H2, H3
+- Formatage texte (gras, italique, souligné, barré)
+- Citations et blocs de code
+- Listes ordonnées et non ordonnées
+- Couleurs de texte et arrière-plan
+- Alignement du texte
+- Images et liens
+- Bouton nettoyage de format
+
+DESIGN:
+- Interface moderne style Apple/FitGang
+- Cartes avec ombres et hover effects
+- Sidebar sticky avec options de publication
+- Conseils d'écriture intégrés
+- Aperçu de l'image uploadée
+- Statistiques de l'article (vues, dates)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📋 LISTE DES FICHIERS MODIFIÉS                              │
+└──────────────────────────────────────────────────────────────┘
+
+Backend:
+- fitgang_app/blueprints/admin/blog.py (fix upload image)
+- fitgang_app/blueprints/profile.py (fix upload photo)
+
+Frontend:
+- fitgang_app/templates/admin/blog_form.html (éditeur Quill + rouge)
+- fitgang_app/templates/profile/index.html (couleurs rouges)
+- fitgang_app/templates/shop/product.html (couleurs rouges)
+- fitgang_app/templates/dashboard/index.html (couleurs rouges)
+
+Documentation:
+- CREATE_WEIGHT_TABLE.sql (création table poids)
+- INSTRUCTIONS_WEIGHT_TABLE.txt (guide installation)
+- TROUBLESHOOT_PASSENGER.sh (script dépannage)
+- SOLUTION_FINALE.txt (instructions déploiement)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🚀 DÉPLOIEMENT SUR PRODUCTION                                │
+└──────────────────────────────────────────────────────────────┘
+
+Sur votre serveur (wrbh3411@down):
+
+1. cd ~/fitgang_app/saas
+
+2. git pull origin claude/saccra-fitgang-complete-overhaul-0186TzukF7j2eifnrXaNd51n
+
+3. find . -name "*.pyc" -delete
+   find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null
+   rm -rf tmp && mkdir -p tmp
+   echo "restart" > tmp/restart.txt
+
+4. cPanel → Setup Python App → STOP → Attendre 1 min → START
+
+5. Testez:
+   - https://fitgang.fr/profile (nouveau design rouge)
+   - https://fitgang.fr/admin/blog/create (éditeur Quill)
+   - https://fitgang.fr/dashboard (upload photo)
+
+┌──────────────────────────────────────────────────────────────┐
+│ ✅ CE QUI FONCTIONNE MAINTENANT                              │
+└──────────────────────────────────────────────────────────────┘
+
+✓ Blog - Publication d'articles avec éditeur WYSIWYG
+✓ Blog - Upload d'images featured sans erreur
+✓ Profile - Upload de photos avant/après
+✓ Dashboard - Suivi de poids avec graphique (après création table)
+✓ Design - Couleurs rouge FitGang cohérentes
+✓ Workouts - Liste des entraînements
+✓ Calculators - Calculateurs fitness
+
+┌──────────────────────────────────────────────────────────────┐
+│ ⚠️  À FAIRE MANUELLEMENT                                     │
+└──────────────────────────────────────────────────────────────┘
+
+1. Créer la table weight_entries en base de données:
+   - Ouvrir phpMyAdmin dans cPanel
+   - Exécuter le script CREATE_WEIGHT_TABLE.sql
+   - Vérifier avec: SELECT COUNT(*) FROM weight_entries;
+
+2. Si vous voulez changer d'autres pages en rouge:
+   - Les variables CSS sont définies dans chaque template
+   - Chercher --apple-blue et remplacer par --fitgang-red
+   - Chercher #007AFF et remplacer par #DC143C
+
+╔══════════════════════════════════════════════════════════════╗
+║                    IDENTITÉ VISUELLE                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+Couleurs FitGang:
+- Rouge principal: #DC143C
+- Rouge foncé: #B01030
+- Gris clair: #F5F5F7
+- Texte foncé: #1D1D1F
+- Bordures: #D2D2D7
+
+Typographie:
+- Font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto
+- Letter-spacing: -0.02em (titres), -0.01em (sous-titres)
+- Border-radius: 12px (inputs), 18px (cartes)
+
+Ombres:
+- Légère: 0 2px 16px rgba(0,0,0,0.06)
+- Moyenne: 0 8px 24px rgba(0,0,0,0.08)
+- Forte: 0 20px 60px rgba(0,0,0,0.15)
+
+Transitions:
+- cubic-bezier(0.4, 0, 0.2, 1) pour tous les effets

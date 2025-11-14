@@ -1,0 +1,149 @@
+=====================================================
+🔍 QUELLE BASE DE DONNÉES UTILISES-TU?
+=====================================================
+
+1. Va sur ton serveur cPanel
+2. Cherche dans les sections:
+   - "Bases de données MySQL" → Tu utilises MySQL/MariaDB
+   - "phpMyAdmin" → Tu utilises MySQL/MariaDB
+   - Rien de tout ça → Tu utilises peut-être SQLite
+
+Si tu utilises phpMyAdmin, c'est MySQL/MariaDB ✅
+
+
+=====================================================
+OPTION A: TU UTILISES MYSQL/MARIADB (cPanel + phpMyAdmin)
+=====================================================
+
+✅ Utilise les fichiers SQL que j'ai créés:
+   - CREATE_ALL_MISSING_TABLES.sql
+   - DIAGNOSTIC_WORKOUTS.sql
+
+1. cPanel → phpMyAdmin
+2. Sélectionne ta base: wrbh3411_fitgang (ou autre nom)
+3. Onglet SQL
+4. Copie-colle le contenu de CREATE_ALL_MISSING_TABLES.sql
+5. Exécute
+
+C'est tout! Toutes les tables seront créées.
+
+
+=====================================================
+OPTION B: TU UTILISES SQLITE (fichier fitgang.db)
+=====================================================
+
+Si tu utilises SQLite, il faut utiliser Flask-Migrate
+pour créer les tables automatiquement.
+
+MÉTHODE 1 - Via SSH sur le serveur:
+-----------------------------------
+1. Connecte-toi en SSH à ton serveur
+2. Va dans le dossier de l'app:
+   cd ~/public_html/saas
+
+3. Active l'environnement virtuel Python (si tu en as un):
+   source venv/bin/activate
+
+4. Initialise les migrations (si pas déjà fait):
+   flask db init
+
+5. Crée une migration pour toutes les tables:
+   flask db migrate -m "Créer toutes les tables manquantes"
+
+6. Applique la migration:
+   flask db upgrade
+
+7. Vérifie que ça a marché:
+   flask shell
+   >>> from fitgang_app import db
+   >>> from fitgang_app.models.blog import BlogPost
+   >>> BlogPost.query.all()
+   >>> exit()
+
+
+MÉTHODE 2 - Via Python directement:
+-----------------------------------
+1. Connecte-toi en SSH
+2. Va dans le dossier: cd ~/public_html/saas
+3. Lance Python:
+   python3
+
+4. Exécute ces commandes:
+   >>> from app import create_app
+   >>> from fitgang_app import db
+   >>> app = create_app('production')
+   >>> with app.app_context():
+   ...     db.create_all()
+   ...     print("Tables créées!")
+   >>> exit()
+
+
+MÉTHODE 3 - Via un script Python:
+-----------------------------------
+J'ai déjà créé des scripts comme create_weight_table.py
+
+Tu peux faire:
+   python3 create_weight_table.py
+
+Mais il faut un script pour chaque table.
+
+
+=====================================================
+COMMENT VÉRIFIER QUELLE BASE TU UTILISES?
+=====================================================
+
+MÉTHODE 1 - Vérifie le fichier .env sur le serveur:
+-----------------------------------
+1. SSH sur le serveur
+2. cd ~/public_html/saas
+3. cat .env
+4. Cherche la ligne DATABASE_URL:
+
+   Si tu vois:
+   DATABASE_URL=sqlite:///fitgang.db
+   → Tu utilises SQLite
+
+   Si tu vois:
+   DATABASE_URL=mysql://user:pass@localhost/wrbh3411_fitgang
+   → Tu utilises MySQL
+
+
+MÉTHODE 2 - Vérifie sur cPanel:
+-----------------------------------
+1. Va sur cPanel
+2. Cherche "Bases de données MySQL"
+3. Si tu vois une base "wrbh3411_fitgang" listée
+   → Tu utilises MySQL
+
+
+MÉTHODE 3 - Cherche le fichier fitgang.db:
+-----------------------------------
+1. SSH sur le serveur
+2. cd ~/public_html/saas
+3. ls -la *.db
+4. Si tu vois "fitgang.db" → SQLite
+5. Si rien → MySQL
+
+
+=====================================================
+⚠️ IMPORTANT
+=====================================================
+
+Sur cPanel, c'est TRÈS RARE d'utiliser SQLite en production.
+99% des sites sur cPanel utilisent MySQL/MariaDB.
+
+Donc tu utilises PROBABLEMENT MySQL/MariaDB.
+
+→ Utilise phpMyAdmin et le fichier CREATE_ALL_MISSING_TABLES.sql
+
+
+=====================================================
+🆘 BESOIN D'AIDE?
+=====================================================
+
+Envoie-moi:
+1. Le contenu de ton fichier .env (masque les mots de passe!)
+2. Est-ce que tu as phpMyAdmin sur cPanel?
+3. Est-ce que tu vois une base "wrbh3411_fitgang" dans cPanel?
+
+Je pourrai te dire exactement quelle méthode utiliser.

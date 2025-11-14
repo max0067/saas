@@ -32,6 +32,12 @@
                 <h5 class="mb-0">🔍 Informations de Debug</h5>
             </div>
             <div class="card-body">
+                {% if debug_info.error %}
+                <div class="alert alert-danger">
+                    <strong>⚠️ Erreur détectée:</strong> {{ debug_info.error }}
+                </div>
+                {% endif %}
+
                 <p><strong>Total de commandes:</strong> {{ debug_info.total_orders }}</p>
                 <p><strong>Commandes complétées:</strong> {{ debug_info.completed_orders }}</p>
 

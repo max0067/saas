@@ -2,196 +2,607 @@
 
 {% block title %}{{ title }} - Admin{% endblock %}
 
+{% block extra_css %}
+<!-- Quill.js CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<style>
+:root {
+    --apple-blue: #007AFF;
+    --apple-gray: #F5F5F7;
+    --apple-dark: #1D1D1F;
+    --apple-border: #D2D2D7;
+}
+
+body {
+    background: linear-gradient(180deg, #FBFBFD 0%, #F5F5F7 100%);
+}
+
+.editor-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.editor-header {
+    background: white;
+    border-radius: 18px;
+    padding: 30px 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.editor-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--apple-dark);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 16px;
+}
+
+.breadcrumb-item a {
+    color: var(--apple-blue);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--apple-light-gray);
+}
+
+.editor-card {
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--apple-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.editor-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.editor-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.editor-card-title i {
+    color: var(--apple-blue);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--apple-dark);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+}
+
+.form-control, .form-select {
+    border: 2px solid var(--apple-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #FAFAFA;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--apple-blue);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    outline: none;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #86868B;
+    margin-top: 6px;
+}
+
+/* Quill Editor Styling */
+.quill-wrapper {
+    border: 2px solid var(--apple-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.quill-wrapper:focus-within {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.ql-toolbar {
+    background: #FAFAFA;
+    border: none !important;
+    border-bottom: 2px solid var(--apple-border) !important;
+    padding: 16px;
+}
+
+.ql-container {
+    border: none !important;
+    font-size: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ql-editor {
+    min-height: 250px;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.ql-editor.ql-blank::before {
+    color: #86868B;
+    font-style: normal;
+}
+
+/* Buttons */
+.btn-apple-primary {
+    background: var(--apple-blue);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    letter-spacing: -0.01em;
+}
+
+.btn-apple-primary:hover {
+    background: #0051D5;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+}
+
+.btn-apple-secondary {
+    background: #F5F5F7;
+    color: var(--apple-dark);
+    border: 2px solid var(--apple-border);
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-apple-secondary:hover {
+    background: #E8E8ED;
+    border-color: #86868B;
+}
+
+/* Switches */
+.form-check-input {
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
+    border: none;
+    background-color: #D2D2D7;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: var(--apple-blue);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: var(--apple-dark);
+    margin-left: 12px;
+}
+
+/* Sidebar Sticky */
+.sidebar-sticky {
+    position: sticky;
+    top: 100px;
+}
+
+/* Image Preview */
+.image-preview {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Stats */
+.post-stats {
+    background: #FAFAFA;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.post-stats p {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #86868B;
+}
+
+.post-stats strong {
+    color: var(--apple-dark);
+}
+
+/* Alert Messages */
+.alert {
+    border-radius: 12px;
+    border: none;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}
+
+.alert-success {
+    background: #D1F4E0;
+    color: #00783E;
+}
+
+.alert-danger {
+    background: #FFE5E5;
+    color: #D70015;
+}
+
+/* Character Counter */
+.char-counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #86868B;
+    margin-top: 6px;
+}
+
+.char-counter.warning {
+    color: #FF9500;
+}
+
+.char-counter.danger {
+    color: #D70015;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Admin</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('admin_blog.index') }}">Articles</a></li>
-                    <li class="breadcrumb-item active">{{ title }}</li>
-                </ol>
-            </nav>
-            <h1>{{ title }}</h1>
-        </div>
+<div class="editor-container">
+    <!-- Header -->
+    <div class="editor-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}"><i class="bi bi-house-door"></i> Admin</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('admin_blog.index') }}"><i class="bi bi-journal-text"></i> Articles</a></li>
+                <li class="breadcrumb-item active">{{ title }}</li>
+            </ol>
+        </nav>
+        <h1><i class="bi bi-pencil-square"></i> {{ title }}</h1>
     </div>
 
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
             <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
+                <strong>{% if category == 'success' %}✓{% elif category == 'danger' %}⚠{% endif %}</strong> {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 
-    <div class="row">
-        <div class="col-lg-8">
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
+    <form method="POST" enctype="multipart/form-data" id="blogForm">
+        {{ form.hidden_tag() }}
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Informations de base</h5>
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Informations de base -->
+                <div class="editor-card">
+                    <h3 class="editor-card-title">
+                        <i class="bi bi-file-text"></i>
+                        Informations de base
+                    </h3>
+
+                    <div class="mb-4">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Titre accrocheur de votre article...", id="title-input") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">{{ form.title.errors[0] }}</div>
+                        {% endif %}
+                        <div class="char-counter" id="title-counter">0 / 200 caractères</div>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                            {% if form.title.errors %}
-                                <div class="invalid-feedback">{{ form.title.errors[0] }}</div>
-                            {% endif %}
-                        </div>
 
-                        <div class="mb-3">
-                            {{ form.slug.label(class="form-label") }}
-                            {{ form.slug(class="form-control" + (" is-invalid" if form.slug.errors else ""), placeholder="laisse-vide-pour-auto-generation") }}
-                            {% if form.slug.errors %}
-                                <div class="invalid-feedback">{{ form.slug.errors[0] }}</div>
-                            {% endif %}
-                            <small class="form-text text-muted">Laisse vide pour génération automatique</small>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.excerpt.label(class="form-label") }}
-                            {{ form.excerpt(class="form-control" + (" is-invalid" if form.excerpt.errors else ""), rows="2") }}
-                            {% if form.excerpt.errors %}
-                                <div class="invalid-feedback">{{ form.excerpt.errors[0] }}</div>
-                            {% endif %}
-                            <small class="form-text text-muted">Court résumé de l'article (max 500 caractères)</small>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.content.label(class="form-label") }}
-                            {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="15") }}
-                            {% if form.content.errors %}
-                                <div class="invalid-feedback">{{ form.content.errors[0] }}</div>
-                            {% endif %}
-                        </div>
+                    <div class="mb-4">
+                        {{ form.slug.label(class="form-label") }}
+                        {{ form.slug(class="form-control" + (" is-invalid" if form.slug.errors else ""), placeholder="mon-article-genial") }}
+                        {% if form.slug.errors %}
+                            <div class="invalid-feedback">{{ form.slug.errors[0] }}</div>
+                        {% endif %}
+                        <small class="form-text">Laissez vide pour génération automatique depuis le titre</small>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Catégorie et Image</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            {{ form.category_id.label(class="form-label") }}
-                            {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
-                            {% if form.category_id.errors %}
-                                <div class="invalid-feedback">{{ form.category_id.errors[0] }}</div>
-                            {% endif %}
-                        </div>
+                <!-- Extrait -->
+                <div class="editor-card">
+                    <h3 class="editor-card-title">
+                        <i class="bi bi-card-text"></i>
+                        Extrait de l'article
+                    </h3>
 
-                        <div class="mb-3">
-                            {{ form.featured_image.label(class="form-label") }}
-                            {{ form.featured_image(class="form-control" + (" is-invalid" if form.featured_image.errors else "")) }}
-                            {% if form.featured_image.errors %}
-                                <div class="invalid-feedback">{{ form.featured_image.errors[0] }}</div>
-                            {% endif %}
-                            {% if post and post.featured_image %}
-                            <div class="mt-2">
-                                <img src="{{ post.featured_image }}" alt="Current image" style="max-width: 200px;" class="rounded">
-                            </div>
-                            {% endif %}
+                    <div class="mb-3">
+                        {{ form.excerpt.label(class="form-label") }}
+                        <div class="quill-wrapper">
+                            <div id="excerpt-editor"></div>
                         </div>
+                        {{ form.excerpt(style="display: none;", id="excerpt-hidden") }}
+                        <small class="form-text">Court résumé qui apparaît dans les listes d'articles (max 500 caractères)</small>
+                        <div class="char-counter" id="excerpt-counter">0 / 500 caractères</div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">SEO</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            {{ form.meta_title.label(class="form-label") }}
-                            {{ form.meta_title(class="form-control" + (" is-invalid" if form.meta_title.errors else "")) }}
-                            {% if form.meta_title.errors %}
-                                <div class="invalid-feedback">{{ form.meta_title.errors[0] }}</div>
-                            {% endif %}
-                        </div>
+                <!-- Contenu -->
+                <div class="editor-card">
+                    <h3 class="editor-card-title">
+                        <i class="bi bi-file-richtext"></i>
+                        Contenu de l'article
+                    </h3>
 
-                        <div class="mb-3">
-                            {{ form.meta_description.label(class="form-label") }}
-                            {{ form.meta_description(class="form-control" + (" is-invalid" if form.meta_description.errors else ""), rows="3") }}
-                            {% if form.meta_description.errors %}
-                                <div class="invalid-feedback">{{ form.meta_description.errors[0] }}</div>
-                            {% endif %}
+                    <div class="mb-3">
+                        {{ form.content.label(class="form-label") }}
+                        <div class="quill-wrapper">
+                            <div id="content-editor"></div>
                         </div>
-
-                        <div class="mb-3">
-                            {{ form.meta_keywords.label(class="form-label") }}
-                            {{ form.meta_keywords(class="form-control" + (" is-invalid" if form.meta_keywords.errors else "")) }}
-                            {% if form.meta_keywords.errors %}
-                                <div class="invalid-feedback">{{ form.meta_keywords.errors[0] }}</div>
-                            {% endif %}
-                            <small class="form-text text-muted">Sépare les mots-clés par des virgules</small>
-                        </div>
+                        {{ form.content(style="display: none;", id="content-hidden") }}
+                        <small class="form-text">Contenu complet de votre article avec mise en forme</small>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-danger w-100">
-                                    <i class="bi bi-save me-2"></i>Enregistrer
-                                </button>
-                            </div>
-                            <div class="col-md-6">
-                                <a href="{{ url_for('admin_blog.index') }}" class="btn btn-outline-secondary w-100">
-                                    <i class="bi bi-x-lg me-2"></i>Annuler
-                                </a>
-                            </div>
+                <!-- Catégorie et Image -->
+                <div class="editor-card">
+                    <h3 class="editor-card-title">
+                        <i class="bi bi-folder"></i>
+                        Catégorie et Image
+                    </h3>
+
+                    <div class="mb-4">
+                        {{ form.category_id.label(class="form-label") }}
+                        {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+                        {% if form.category_id.errors %}
+                            <div class="invalid-feedback">{{ form.category_id.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.featured_image.label(class="form-label") }}
+                        {{ form.featured_image(class="form-control" + (" is-invalid" if form.featured_image.errors else "")) }}
+                        {% if form.featured_image.errors %}
+                            <div class="invalid-feedback">{{ form.featured_image.errors[0] }}</div>
+                        {% endif %}
+                        {% if post and post.featured_image %}
+                        <div class="image-preview">
+                            <img src="{{ post.featured_image }}" alt="Image actuelle" style="max-width: 100%;">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- SEO -->
+                <div class="editor-card">
+                    <h3 class="editor-card-title">
+                        <i class="bi bi-search"></i>
+                        Optimisation SEO
+                    </h3>
+
+                    <div class="mb-4">
+                        {{ form.meta_title.label(class="form-label") }}
+                        {{ form.meta_title(class="form-control" + (" is-invalid" if form.meta_title.errors else ""), placeholder="Titre optimisé pour Google...") }}
+                        {% if form.meta_title.errors %}
+                            <div class="invalid-feedback">{{ form.meta_title.errors[0] }}</div>
+                        {% endif %}
+                        <small class="form-text">Titre qui apparaît dans les résultats Google (50-60 caractères recommandés)</small>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.meta_description.label(class="form-label") }}
+                        {{ form.meta_description(class="form-control" + (" is-invalid" if form.meta_description.errors else ""), rows="3", placeholder="Description qui apparaît dans Google...") }}
+                        {% if form.meta_description.errors %}
+                            <div class="invalid-feedback">{{ form.meta_description.errors[0] }}</div>
+                        {% endif %}
+                        <small class="form-text">Description pour les moteurs de recherche (150-160 caractères recommandés)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.meta_keywords.label(class="form-label") }}
+                        {{ form.meta_keywords(class="form-control" + (" is-invalid" if form.meta_keywords.errors else ""), placeholder="fitness, musculation, nutrition") }}
+                        {% if form.meta_keywords.errors %}
+                            <div class="invalid-feedback">{{ form.meta_keywords.errors[0] }}</div>
+                        {% endif %}
+                        <small class="form-text">Mots-clés séparés par des virgules</small>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="editor-card">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-apple-primary w-100">
+                                <i class="bi bi-check-circle me-2"></i>Enregistrer l'article
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin_blog.index') }}" class="btn btn-apple-secondary w-100">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
+                            </a>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
 
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Options de publication</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar-sticky">
+                    <!-- Publication Options -->
+                    <div class="editor-card">
+                        <h3 class="editor-card-title">
+                            <i class="bi bi-cloud-upload"></i>
+                            Publication
+                        </h3>
 
                         <div class="mb-3">
                             <div class="form-check form-switch">
-                                {{ form.is_published(class="form-check-input") }}
+                                {{ form.is_published(class="form-check-input", role="switch") }}
                                 {{ form.is_published.label(class="form-check-label") }}
                             </div>
+                            <small class="form-text">Rendre l'article visible au public</small>
                         </div>
 
                         <div class="mb-3">
                             <div class="form-check form-switch">
-                                {{ form.is_featured(class="form-check-input") }}
+                                {{ form.is_featured(class="form-check-input", role="switch") }}
                                 {{ form.is_featured.label(class="form-check-label") }}
                             </div>
+                            <small class="form-text">Mettre en avant sur la page d'accueil</small>
                         </div>
 
                         {% if post %}
-                        <hr>
-                        <div class="small text-muted">
-                            <p class="mb-1"><strong>Créé le:</strong> {{ post.created_at.strftime('%d/%m/%Y à %H:%M') }}</p>
-                            <p class="mb-1"><strong>Modifié le:</strong> {{ post.updated_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                        <div class="post-stats">
+                            <p><strong>Créé le:</strong><br>{{ post.created_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                            <p><strong>Modifié le:</strong><br>{{ post.updated_at.strftime('%d/%m/%Y à %H:%M') }}</p>
                             <p class="mb-0"><strong>Vues:</strong> {{ post.views }}</p>
                         </div>
                         {% endif %}
-                    </form>
+                    </div>
+
+                    <!-- Quick Tips -->
+                    <div class="editor-card">
+                        <h3 class="editor-card-title">
+                            <i class="bi bi-lightbulb"></i>
+                            Conseils
+                        </h3>
+                        <ul style="padding-left: 20px; margin: 0; color: #86868B; font-size: 0.9rem; line-height: 1.8;">
+                            <li>Utilisez des titres courts et percutants</li>
+                            <li>L'extrait doit donner envie de lire</li>
+                            <li>Ajoutez une image attractive (1200x630px recommandé)</li>
+                            <li>Optimisez pour le SEO avec des mots-clés</li>
+                            <li>Relisez avant de publier !</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- Éditeur de texte désactivé temporairement -->
+<!-- Quill.js -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+// Configuration Quill pour l'extrait (simple)
+var excerptQuill = new Quill('#excerpt-editor', {
+    theme: 'snow',
+    placeholder: 'Écrivez un résumé court et accrocheur de votre article...',
+    modules: {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            ['link'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['clean']
+        ]
+    }
+});
+
+// Configuration Quill pour le contenu (complet)
+var contentQuill = new Quill('#content-editor', {
+    theme: 'snow',
+    placeholder: 'Commencez à écrire votre article ici...',
+    modules: {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'align': [] }],
+            ['link', 'image'],
+            ['clean']
+        ]
+    }
+});
+
+// Charger le contenu existant
+{% if post %}
+    {% if post.excerpt %}
+    excerptQuill.root.innerHTML = {{ post.excerpt|tojson }};
+    {% endif %}
+    {% if post.content %}
+    contentQuill.root.innerHTML = {{ post.content|tojson }};
+    {% endif %}
+{% endif %}
+
+// Synchroniser avec les champs cachés avant soumission
+document.getElementById('blogForm').addEventListener('submit', function() {
+    document.getElementById('excerpt-hidden').value = excerptQuill.root.innerHTML;
+    document.getElementById('content-hidden').value = contentQuill.root.innerHTML;
+});
+
+// Compteur de caractères pour le titre
+const titleInput = document.getElementById('title-input');
+const titleCounter = document.getElementById('title-counter');
+
+if (titleInput) {
+    titleInput.addEventListener('input', function() {
+        const length = this.value.length;
+        titleCounter.textContent = length + ' / 200 caractères';
+
+        if (length > 180) {
+            titleCounter.classList.add('danger');
+            titleCounter.classList.remove('warning');
+        } else if (length > 150) {
+            titleCounter.classList.add('warning');
+            titleCounter.classList.remove('danger');
+        } else {
+            titleCounter.classList.remove('warning', 'danger');
+        }
+    });
+
+    // Déclenchement initial
+    titleInput.dispatchEvent(new Event('input'));
+}
+
+// Compteur pour l'extrait
+excerptQuill.on('text-change', function() {
+    const length = excerptQuill.getText().trim().length;
+    const counter = document.getElementById('excerpt-counter');
+    counter.textContent = length + ' / 500 caractères';
+
+    if (length > 500) {
+        counter.classList.add('danger');
+        counter.classList.remove('warning');
+    } else if (length > 450) {
+        counter.classList.add('warning');
+        counter.classList.remove('danger');
+    } else {
+        counter.classList.remove('warning', 'danger');
+    }
+});
+</script>
 {% endblock %}

@@ -49,7 +49,7 @@ def create():
         if not post.slug:
             post.slug = slugify(post.title)
 
-        if form.featured_image.data:
+        if form.featured_image.data and hasattr(form.featured_image.data, 'filename'):
             success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')
             if success:
                 post.featured_image = file_path
@@ -100,8 +100,8 @@ def edit(post_id):
                 from datetime import datetime
                 post.published_at = datetime.utcnow()
 
-            # Gérer l'image
-            if form.featured_image.data:
+            # Gérer l'image - vérifier que c'est bien un fichier uploadé et pas une string
+            if form.featured_image.data and hasattr(form.featured_image.data, 'filename'):
                 success, file_path = save_uploaded_file(form.featured_image.data, folder='blog', file_type='image')
                 if success:
                     post.featured_image = file_path

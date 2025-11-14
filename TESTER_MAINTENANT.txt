@@ -1,0 +1,42 @@
+=== PAGES À TESTER SUR FITGANG.FR ===
+
+🎨 DESIGN MODERNISÉ:
+
+1. https://fitgang.fr/profile
+   → Profil modernisé style Apple avec cartes
+
+2. https://fitgang.fr/programmes/programme-seche
+   → Page produit redessinée (grille 2 colonnes, sticky image)
+
+3. https://fitgang.fr/programmes/ebooks
+   → Sans bandeaux de couleurs (fond blanc)
+
+4. https://fitgang.fr/programmes/programmes
+   → Sans bandeaux de couleurs (fond blanc)
+
+
+🐛 BUGS CORRIGÉS:
+
+5. https://fitgang.fr/workouts
+   → Plus d'erreur 500
+
+6. https://fitgang.fr/calculators
+   → IMC et TDEE fonctionnels
+
+7. https://fitgang.fr/admin/blog/1/edit
+   → Édition d'articles avec gestion d'erreurs
+
+
+⚠️ SYSTÈME DE POIDS (Nécessite création de table):
+
+8. https://fitgang.fr/dashboard
+   → Section "Suivi de Poids" visible
+   → Si erreur "table n'existe pas", c'est normal
+   → Créer la table via cPanel phpMyAdmin ou contact admin
+
+
+📌 IMPORTANT:
+- Videz le cache de votre navigateur (Ctrl+Shift+Suppr)
+- Ou testez en navigation privée
+- Les changements de design sont immédiats
+- Le système de poids nécessite la création de la table weight_entries

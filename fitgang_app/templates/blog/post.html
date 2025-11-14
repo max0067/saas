@@ -2,6 +2,222 @@
 
 {% block title %}{{ post.title }} - {{ site_name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+.blog-post-detail {
+    padding: 60px 0;
+    background: #FAFAFA;
+}
+
+.post-header {
+    margin-bottom: 40px;
+}
+
+.post-meta-header {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    color: #86868B;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.meta-item.category {
+    background: #E54B4C;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.post-detail-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1D1D1F;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.post-featured-image {
+    margin-bottom: 40px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.post-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.post-content-wrapper {
+    background: white;
+    padding: 60px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    margin-bottom: 40px;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #1D1D1F;
+}
+
+.post-content-wrapper h1,
+.post-content-wrapper h2,
+.post-content-wrapper h3 {
+    font-weight: 700;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    letter-spacing: -0.01em;
+    color: #1D1D1F;
+}
+
+.post-content-wrapper h1 {
+    font-size: 2rem;
+    border-bottom: 3px solid #E54B4C;
+    padding-bottom: 0.5em;
+}
+
+.post-content-wrapper h2 {
+    font-size: 1.75rem;
+}
+
+.post-content-wrapper h3 {
+    font-size: 1.5rem;
+}
+
+.post-content-wrapper p {
+    margin-bottom: 1.5em;
+}
+
+.post-content-wrapper strong,
+.post-content-wrapper b {
+    font-weight: 700;
+    color: #000;
+}
+
+.post-content-wrapper ul,
+.post-content-wrapper ol {
+    margin: 1.5em 0;
+    padding-left: 2em;
+}
+
+.post-content-wrapper li {
+    margin-bottom: 0.75em;
+}
+
+.post-content-wrapper blockquote {
+    border-left: 4px solid #E54B4C;
+    padding-left: 1.5em;
+    margin: 2em 0;
+    font-style: italic;
+    color: #6E6E73;
+    background: #F5F5F7;
+    padding: 1.5em;
+    border-radius: 0 12px 12px 0;
+}
+
+.post-content-wrapper a {
+    color: #E54B4C;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.post-content-wrapper a:hover {
+    color: #C63C3D;
+    text-decoration: underline;
+}
+
+.post-content-wrapper img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 2em 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-content-wrapper code {
+    background: #F5F5F7;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #E54B4C;
+}
+
+.post-content-wrapper pre {
+    background: #1D1D1F;
+    color: #F5F5F7;
+    padding: 1.5em;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 2em 0;
+}
+
+.post-content-wrapper pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+.post-footer {
+    text-align: center;
+}
+
+.back-to-blog {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #E54B4C;
+    color: #E54B4C;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.back-to-blog:hover {
+    background: #E54B4C;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 75, 76, 0.3);
+}
+
+@media (max-width: 768px) {
+    .post-detail-title {
+        font-size: 2rem;
+    }
+
+    .post-content-wrapper {
+        padding: 30px 20px;
+        font-size: 1rem;
+    }
+
+    .post-content-wrapper h1 {
+        font-size: 1.75rem;
+    }
+
+    .post-content-wrapper h2 {
+        font-size: 1.5rem;
+    }
+
+    .post-content-wrapper h3 {
+        font-size: 1.25rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <article class="blog-post-detail">
     <div class="container">
@@ -28,7 +244,11 @@
 
                 {% if post.featured_image %}
                 <div class="post-featured-image">
+                    {% if post.featured_image.startswith('http') %}
                     <img src="{{ post.featured_image }}" alt="{{ post.title }}">
+                    {% else %}
+                    <img src="{{ url_for('uploaded_file', filename=post.featured_image) }}" alt="{{ post.title }}">
+                    {% endif %}
                 </div>
                 {% endif %}
 

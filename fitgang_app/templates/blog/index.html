@@ -26,7 +26,11 @@
                         {% if post.featured_image %}
                         <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="blog-post-image-link">
                             <div class="blog-post-image">
+                                {% if post.featured_image.startswith('http') %}
                                 <img src="{{ post.featured_image }}" alt="{{ post.title }}">
+                                {% else %}
+                                <img src="{{ url_for('uploaded_file', filename=post.featured_image) }}" alt="{{ post.title }}">
+                                {% endif %}
                             </div>
                         </a>
                         {% endif %}

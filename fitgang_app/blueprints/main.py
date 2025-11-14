@@ -20,6 +20,12 @@ def index():
     )
 
 
+@main_bp.route('/test-update')
+def test_update():
+    """Test page to verify updates are deployed."""
+    return render_template('test_update.html')
+
+
 @main_bp.route('/download/<token>')
 def download_file(token):
     """Secure file download."""

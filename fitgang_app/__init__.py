@@ -137,4 +137,8 @@ def create_app(config_name=None):
         from flask import send_from_directory
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+    # Register custom Jinja2 filters
+    from fitgang_app.utils.text_filters import register_filters
+    register_filters(app)
+
     return app

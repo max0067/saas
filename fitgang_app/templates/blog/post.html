@@ -317,7 +317,7 @@
                 {% endif %}
 
                 <div class="post-content-wrapper">
-                    {{ post.content|safe }}
+                    {{ post.content|smart_content|safe }}
                 </div>
 
                 <footer class="post-footer">

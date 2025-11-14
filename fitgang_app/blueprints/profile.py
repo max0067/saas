@@ -72,6 +72,11 @@ def photos():
     form = UploadPhotoForm()
 
     if form.validate_on_submit():
+        # Vérifier que c'est bien un fichier uploadé et pas une string
+        if not form.photo.data or not hasattr(form.photo.data, 'filename'):
+            flash('Veuillez sélectionner une photo à uploader.', 'danger')
+            return redirect(url_for('profile.photos'))
+
         success, file_path = save_uploaded_file(form.photo.data, folder='user_photos', file_type='image')
 
         if success:

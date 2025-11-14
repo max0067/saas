@@ -5,7 +5,8 @@
 {% block content %}
 <style>
 :root {
-    --apple-blue: #007AFF;
+    --fitgang-red: #DC143C;
+    --fitgang-red-dark: #B01030;
     --apple-gray: #F5F5F7;
     --apple-dark: #1D1D1F;
     --apple-light-gray: #86868B;
@@ -62,7 +63,7 @@
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--apple-blue) 0%, #0051D5 100%);
+    background: linear-gradient(135deg, var(--fitgang-red) 0%, var(--fitgang-red-dark) 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -108,7 +109,7 @@
 .stat-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    border-color: var(--apple-blue);
+    border-color: var(--fitgang-red);
 }
 
 .stat-card h6 {
@@ -166,8 +167,8 @@
 
 .action-btn {
     background: white;
-    border: 2px solid var(--apple-blue);
-    color: var(--apple-blue);
+    border: 2px solid var(--fitgang-red);
+    color: var(--fitgang-red);
     border-radius: 12px;
     padding: 16px 24px;
     font-size: 1rem;
@@ -183,20 +184,20 @@
 }
 
 .action-btn:hover {
-    background: var(--apple-blue);
+    background: var(--fitgang-red);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25);
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, var(--apple-blue) 0%, #0051D5 100%);
+    background: linear-gradient(135deg, var(--fitgang-red) 0%, var(--fitgang-red-dark) 100%);
     color: white;
-    border-color: var(--apple-blue);
+    border-color: var(--fitgang-red);
 }
 
 .action-btn.primary:hover {
-    background: linear-gradient(135deg, #0051D5 0%, var(--apple-blue) 100%);
+    background: linear-gradient(135deg, var(--fitgang-red-dark) 0%, var(--fitgang-red) 100%);
     box-shadow: 0 12px 32px rgba(0, 122, 255, 0.35);
 }
 

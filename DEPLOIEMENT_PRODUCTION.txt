@@ -1,0 +1,54 @@
+╔══════════════════════════════════════════════════════════════╗
+║  INSTRUCTIONS POUR DÉPLOYER SUR VOTRE SERVEUR DE PRODUCTION  ║
+╚══════════════════════════════════════════════════════════════╝
+
+VOUS ÊTES SUR: wrbh3411@down (serveur de production)
+REPOSITORY: https://github.com/max0067/saas
+BRANCHE: claude/saccra-fitgang-complete-overhaul-0186TzukF7j2eifnrXaNd51n
+
+┌──────────────────────────────────────────────────────────────┐
+│ COMMANDES À EXÉCUTER SUR VOTRE SERVEUR (wrbh3411@down):     │
+└──────────────────────────────────────────────────────────────┘
+
+# 1. Allez dans le dossier de votre application
+cd ~/fitgang_app/saas
+# OU cd ~/saas
+# (le dossier où se trouve passenger_wsgi.py)
+
+# 2. Vérifiez que vous êtes sur le bon repository
+git remote -v
+# Devrait montrer: https://github.com/max0067/saas
+
+# 3. Téléchargez les derniers changements
+git fetch origin
+
+# 4. Basculez sur la bonne branche
+git checkout claude/saccra-fitgang-complete-overhaul-0186TzukF7j2eifnrXaNd51n
+
+# 5. Téléchargez les changements
+git pull origin claude/saccra-fitgang-complete-overhaul-0186TzukF7j2eifnrXaNd51n
+
+# 6. Nettoyez le cache Python
+find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null
+find . -name "*.pyc" -delete
+
+# 7. Redémarrez Passenger
+touch tmp/restart.txt
+
+# 8. PUIS REDÉMARREZ VIA CPANEL:
+# cPanel → Setup Python App → RESTART
+
+┌──────────────────────────────────────────────────────────────┐
+│ FICHIERS QUI SERONT MIS À JOUR:                             │
+└──────────────────────────────────────────────────────────────┘
+
+✓ fitgang_app/templates/profile/index.html (profil modernisé)
+✓ fitgang_app/templates/shop/product.html (page produit Apple)
+✓ fitgang_app/templates/dashboard/index.html (système de poids)
+✓ fitgang_app/blueprints/calculators.py (calculateurs corrigés)
+✓ fitgang_app/blueprints/workouts.py (erreur 500 corrigée)
+✓ fitgang_app/blueprints/admin/blog.py (blog amélioré)
+✓ fitgang_app/static/version.txt (fichier de test)
+... et bien d'autres!
+
+DERNIER COMMIT: 69850b0 - Docs: Instructions redémarrage cPanel

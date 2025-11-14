@@ -1,0 +1,76 @@
+╔══════════════════════════════════════════════════════════════╗
+║         CRÉER LA TABLE WEIGHT_ENTRIES (SUIVI POIDS)          ║
+╚══════════════════════════════════════════════════════════════╝
+
+La fonctionnalité de suivi de poids fonctionne MAIS la table
+n'existe pas encore dans la base de données.
+
+┌──────────────────────────────────────────────────────────────┐
+│ MÉTHODE 1: Via cPanel phpMyAdmin (RECOMMANDÉ)               │
+└──────────────────────────────────────────────────────────────┘
+
+1. Connectez-vous à cPanel
+
+2. Cherchez "phpMyAdmin" et cliquez dessus
+
+3. Dans la liste à gauche, cliquez sur votre base de données FitGang
+   (probablement: wrbh3411_fitgang ou similaire)
+
+4. Cliquez sur l'onglet "SQL" en haut
+
+5. Copiez-collez tout le contenu du fichier:
+   CREATE_WEIGHT_TABLE.sql
+
+6. Cliquez sur "Exécuter" (ou "Go")
+
+7. Vous devriez voir: "1 requête exécutée avec succès"
+
+8. Testez sur: https://fitgang.fr/dashboard
+   Essayez d'ajouter un poids → devrait fonctionner!
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ MÉTHODE 2: Via ligne de commande (si vous avez MySQL)       │
+└──────────────────────────────────────────────────────────────┘
+
+# Trouvez le nom de votre base de données
+grep DATABASE_URL .env
+# OU
+grep SQLALCHEMY_DATABASE .env
+
+# Exécutez le script SQL
+mysql -u VOTRE_USER -p VOTRE_DATABASE < CREATE_WEIGHT_TABLE.sql
+
+# OU si SQLite:
+sqlite3 instance/fitgang.db < CREATE_WEIGHT_TABLE.sql
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ VÉRIFICATION QUE ÇA FONCTIONNE                              │
+└──────────────────────────────────────────────────────────────┘
+
+1. Allez sur: https://fitgang.fr/dashboard
+
+2. Vous devriez voir la section "Suivi de Poids"
+
+3. Entrez un poids (ex: 75.5) et cliquez "Enregistrer"
+
+4. ✅ Si ça fonctionne: La page se recharge et affiche le poids
+   ❌ Si erreur: Vérifiez que la table a bien été créée
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ RÉSUMÉ DE CE QUI EST MAINTENANT FONCTIONNEL                │
+└──────────────────────────────────────────────────────────────┘
+
+Une fois la table créée, TOUT devrait fonctionner:
+
+✅ Dashboard - Suivi de poids avec graphique
+✅ Profile - Design Apple moderne
+✅ Blog - Publication d'articles (plus d'erreur 500)
+✅ Workouts - Liste des entraînements
+✅ Calculators - Calculateurs fitness
+✅ Programmes - Pages produits style Apple
+
+Si vous voyez déjà le nouveau design Apple sur /dashboard et /profile,
+c'est que tout est bien déployé! Il ne manque que cette table.

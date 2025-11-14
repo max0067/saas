@@ -394,14 +394,6 @@ body {
     color: #FF3B30;
 }
 
-.weight-chart-container {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-    margin-bottom: 24px;
-}
-
 .weight-form-container {
     background: linear-gradient(135deg, var(--fitgang-red) 0%, #C63C3D 100%);
     border-radius: 16px;
@@ -613,13 +605,8 @@ body {
         <div class="row g-4">
             <div class="col-lg-8">
                 {% if weight_entries %}
-                <div class="weight-chart-container">
-                    <h5 style="margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">Graphique d'évolution</h5>
-                    <canvas id="weightChart" height="100"></canvas>
-                </div>
-
                 <div class="weight-entries-list">
-                    <h5 style="margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">Historique</h5>
+                    <h5 style="margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">Historique des pesées</h5>
                     {% for entry in weight_entries[:10] %}
                     <div class="weight-entry-item">
                         <div class="weight-entry-info">
@@ -780,95 +767,4 @@ body {
         {% endif %}
     </div>
 </section>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const chartCanvas = document.getElementById('weightChart');
-    if (chartCanvas) {
-        fetch('{{ url_for("dashboard.weight_data") }}')
-            .then(response => response.json())
-            .then(data => {
-                const ctx = chartCanvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: 'Poids (kg)',
-                            data: data.weights,
-                            borderColor: '#E54B4C',
-                            backgroundColor: 'rgba(0, 122, 255, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#E54B4C',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointHoverRadius: 7
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                padding: 12,
-                                borderRadius: 8,
-                                titleFont: {
-                                    size: 14,
-                                    weight: 600
-                                },
-                                bodyFont: {
-                                    size: 13
-                                },
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.parsed.y.toFixed(1) + ' kg';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: false,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    font: {
-                                        size: 12
-                                    },
-                                    callback: function(value) {
-                                        return value.toFixed(1) + ' kg';
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    font: {
-                                        size: 11
-                                    },
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Error loading weight data:', error));
-    }
-});
-</script>
 {% endblock %}

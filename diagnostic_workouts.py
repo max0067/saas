@@ -63,8 +63,9 @@ def diagnostic(user_email):
 
         completed_orders = [o for o in orders if o.status == OrderStatus.COMPLETED]
         print(f"   ✅ Commandes complétées: {len(completed_orders)}")
-        print(f"   ⏳ Commandes en cours: {len([o for o in orders if o.status == OrderStatus.PENDING])}")
-        print(f"   ❌ Commandes annulées: {len([o for o in orders if o.status == OrderStatus.CANCELLED])}")
+        print(f"   ⏳ Commandes en cours: {len([o for o in orders if o.status in [OrderStatus.PENDING, OrderStatus.PROCESSING]])}")
+        print(f"   ❌ Commandes échouées: {len([o for o in orders if o.status == OrderStatus.FAILED])}")
+        print(f"   💰 Commandes remboursées: {len([o for o in orders if o.status == OrderStatus.REFUNDED])}")
 
         if not completed_orders:
             print("\n❌ PROBLÈME: Aucune commande avec le statut COMPLETED!")

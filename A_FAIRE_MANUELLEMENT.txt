@@ -1,0 +1,112 @@
+╔══════════════════════════════════════════════════════════════╗
+║       ACTIONS À FAIRE MANUELLEMENT DANS PHPMYADMIN           ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚨 IMPORTANT: Ces tables doivent être créées dans phpMyAdmin
+              pour que toutes les fonctionnalités marchent!
+
+┌──────────────────────────────────────────────────────────────┐
+│ 1️⃣  TABLE WEIGHT_ENTRIES (SUIVI DE POIDS)                   │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+- Dashboard affiche: "Erreur: La table weight_entries n'existe pas"
+- Impossible de sauvegarder le poids
+
+SOLUTION:
+1. cPanel → phpMyAdmin
+2. Sélectionnez votre base de données FitGang
+3. Cliquez sur "SQL"
+4. Copiez-collez ce code:
+
+CREATE TABLE IF NOT EXISTS weight_entries (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_id INTEGER NOT NULL,
+    weight DECIMAL(5,2) NOT NULL,
+    notes TEXT,
+    recorded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    INDEX idx_weight_entries_user_id (user_id),
+    INDEX idx_weight_entries_recorded_at (recorded_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+5. Cliquez "Exécuter"
+6. Testez: https://fitgang.fr/dashboard → Ajoutez un poids
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ 2️⃣  VÉRIFIER LES IMAGES DU BLOG                             │
+└──────────────────────────────────────────────────────────────┘
+
+SYMPTÔME:
+- Les images ne s'affichent pas sur https://fitgang.fr/blog
+
+DIAGNOSTIC:
+1. Allez dans phpMyAdmin → Table blog_posts
+2. Regardez la colonne "featured_image"
+3. Les valeurs devraient être du type:
+   - "blog/image-article.jpg" (LOCAL)
+   - OU "https://..." (URL complète)
+
+SI LES IMAGES SONT VIDES:
+- Réditez vos articles dans /admin/blog
+- Uploadez de nouveau les images
+- Sauvegardez
+
+SI LES CHEMINS SONT INCORRECTS:
+- Vérifiez que les fichiers existent dans:
+  /home/wrbh3411/fitgang_app/saas/uploads/blog/
+
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📊 RÉSUMÉ DES CORRECTIONS DÉPLOYÉES                         │
+└──────────────────────────────────────────────────────────────┘
+
+✅ BUGS CORRIGÉS:
+- Blog: Publication articles (plus d'erreur 500)
+- Blog: Upload images featured (vérification fichier)
+- Profile: Upload photos (vérification fichier)
+- Workouts: Erreur 500 (simplification code)
+- Calculators: Erreur 500 (suppression WTForms)
+
+✅ DESIGN MODERNE:
+- Couleurs: Tous boutons en rouge #E54B4C
+- Blog: Mise en page améliorée (H2/H3 visibles)
+- Blog: Contenu plus lisible (line-height: 2)
+- Blog: Encadrement plus large (col-lg-10)
+- Profile: Design Apple/FitGang moderne
+- Dashboard: Système suivi poids (après table)
+- Éditeur blog: Quill.js avec formatage riche
+
+✅ PAGES MODIFIÉES:
+- /blog (liste + détail articles)
+- /profile (page profil)
+- /dashboard (tableau de bord + poids)
+- /programmes/programmes (boutons rouges)
+- /programmes/ebooks (boutons rouges)
+- /programmes/[produit] (page détail)
+- /admin/blog (éditeur moderne)
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🔍 TESTER APRÈS DÉPLOIEMENT                                 │
+└──────────────────────────────────────────────────────────────┘
+
+1. Créez la table weight_entries (instructions ci-dessus)
+2. Testez: https://fitgang.fr/dashboard → Poids
+3. Testez: https://fitgang.fr/blog → Images
+4. Testez: https://fitgang.fr/profile → Design
+5. Testez: https://fitgang.fr/programmes → Boutons rouges
+6. Testez: https://fitgang.fr/admin/blog/create → Éditeur
+
+┌──────────────────────────────────────────────────────────────┐
+│ 📱 SI VOUS NE VOYEZ PAS LES CHANGEMENTS                    │
+└──────────────────────────────────────────────────────────────┘
+
+1. Videz le cache du navigateur (Ctrl+Shift+Delete)
+2. Essayez en navigation privée (Ctrl+Shift+N)
+3. Sur mobile: paramètres → effacer cache
+4. Vérifiez que Passenger a bien redémarré (cPanel)
+5. Attendez 2-3 minutes (CDN peut cacher)

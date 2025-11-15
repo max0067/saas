@@ -21,7 +21,7 @@
         {% if posts.items %}
             <div class="row g-4">
                 {% for post in posts.items %}
-                <div class="col-lg-6">
+                <div class="col-lg-4 col-md-6">
                     <article class="blog-post-card">
                         {% if post.featured_image %}
                         <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="blog-post-image-link">
